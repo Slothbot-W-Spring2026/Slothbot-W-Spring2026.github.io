@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sloth Bot – Full Telemetry</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+</script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Segoe UI', Tahoma, sans-serif;
+    background:#0b1120; color:#e2e8f0;
+    padding:24px;
+  }
+  .container{max-width:1500px;margin:0 auto;}
+
+  /* ---- Header ---- */
+  .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #334155;
+  }
+  .logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 0;
+    color: #f1f5f9;
+  }
+
+  .toolbar{
+    display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 16px;
+    align-items:center;
+  }
+  .toolbar-left{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+  .toolbar-right{display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
+  .sleep-display{
+    font-size:15px;color:#6366f1;background:#1e293b;
+    padding:4px 14px;border-radius:20px;border:1px solid #334155;
+  }
+  .sleep-display strong{font-weight:700;}
+  .datetime{
+    font-size:14px;color:#94a3b8;background:#1e293b;
+    padding:4px 14px;border-radius:20px;border:1px solid #334155;
+  }
+  .btn{
+    background:#1e293b;color:#94a3b8;border:1px solid #334155;
+    padding:6px 18px;border-radius:20px;cursor:pointer;font-size:13px;
+  }
+  .btn:hover{background:#334155;color:#fff;}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .card{
+    background:#1e293b;border-radius:12px;padding:16px;
+    border:1px solid #2d3a4f;
+    display:flex;
+    flex-direction:column;
+  }
+  .card h3{
+    font-size:15px;font-weight:600;color:#f1f5f9;margin-bottom:2px;
+  }
+  .card .sub{
+    font-size:11px;color:#94a3b8;margin-bottom:8px;
+    line-height:1.4;
+  }
+  .chart-container{position:relative;height:200px;flex-shrink:0;}
+  .full-width{grid-column:1/-1;}
+  @media (max-width:1000px){.grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:600px){.grid{grid-template-columns:1fr;}}
+  @media (max-width:600px){.chart-container{height:170px;}}
+
+  .flex-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  .flex-row .card { flex: 1; }
+
+  /* Combined charts: Accelerometer + Light side by side */
+  .combined-charts {
+    display: flex;
+    gap: 20px;
+  }
+  .combined-charts .chart-half {
+    flex: 1;
+    min-width: 0;
+  }
+  .combined-charts .chart-half .chart-container {
+    height: 190px;
+  }
+  .combined-charts .chart-half .sub {
+    margin-bottom: 4px;
+  }
+
+  /* Gauge styles */
+  .gauge-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex:1;
+  }
+  .gauge-canvas {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    flex-shrink:0;
+  }
+  .gauge-canvas canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+  .gauge-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+  }
+  .gauge-center .value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    line-height:1.2;
+  }
+  .gauge-center .unit {
+    font-size: 13px;
+    color: #94a3b8;
+  }
+  .gauge-center .sub {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top:2px;
+  }
+  .gauge-stats {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top:4px;
+  }
+  .gauge-stats .stat {
+    background: #0b1120;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #94a3b8;
+    border: 1px solid #2d3a4f;
+  }
+  .gauge-stats .stat strong {
+    color: #f1f5f9;
+    font-weight: 500;
+  }
+  .toggle-btn {
+    background: #334155;
+    border: none;
+    color: #f1f5f9;
+    padding: 4px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 11px;
+    margin-top: 4px;
+    align-self: flex-end;
+  }
+  .toggle-btn:hover { background: #475569; }
+  .gauge-container { display: flex; flex-direction:column; flex:1; }
+  .gauge-container.hidden { display: none; }
+  .chart-container-view { display: none; flex:1; }
+  .chart-container-view.active { display: block; }
+  .trend-chart { height:60px; margin-top:6px; }
+  .trend-container { margin-top:8px; }
+
+  /* Logo orientation card */
+  .logo-orientation-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    perspective: 800px;
+    background: radial-gradient(ellipse at center, #1a2a3a 0%, #0b1120 100%);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+  .logo-orientation-scene {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.15s ease-out;
+  }
+  .logo-orientation-scene img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(74, 222, 128, 0.2);
+  }
+
+  /* Map */
+  .map-container{height:320px;border-radius:8px;overflow:hidden;background:#0b1120;margin-top:4px;}
+  .gps-stats{display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:#94a3b8;}
+  .gps-stats strong{color:#f1f5f9;}
+
+  @media (max-width:700px) {
+    .combined-charts { flex-direction: column; }
+    .flex-row { flex-direction: column; }
+    .header-container { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ============================================================
+       HEADER WITH IMAGE LOGO
+  ============================================================ -->
+  <div class="header-container">
+    <div class="brand">
+      <div class="logo">
+        <img src="LOGO_no_UW_V1.png" alt="SlothBot Logo" />
+      </div>
+      <h1>Sloth Bot Telemetry</h1>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn" id="refreshBtn">⟳ Refresh</button>
+      <button class="btn" id="exportBtn">⬇ Export CSV</button>
+      <span class="datetime" id="datetimeDisplay"></span>
+      <span class="sleep-display">😴 Sleep <strong id="sleepDisplay">0.0</strong> min</span>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       REST OF THE DASHBOARD
+  ============================================================ -->
+  <div class="flex-row" id="gaugeRow"></div>
+  <div class="grid" id="envGrid"></div>
+
+  <div class="grid" style="margin-top:20px;">
+    <div class="card full-width" style="grid-column: span 2;">
+      <h3>📊 Motion &amp; Light</h3>
+      <div class="sub">Accelerometer (g) · Ambient Light (lux)</div>
+      <div class="combined-charts">
+        <div class="chart-half">
+          <div class="sub" style="font-size:10px;color:#64748b;">Accelerometer X · Y · Z</div>
+          <div class="chart-container"><canvas id="accChart"></canvas></div>
+        </div>
+        <div class="chart-half">
+          <div class="sub" style="font-size:10px;color:#64748b;">Ambient Light</div>
+          <div class="chart-container"><canvas id="lightChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🦥 Sloth Orientation</h3>
+      <div class="sub">Logo image</div>
+      <div class="logo-orientation-container">
+        <div class="logo-orientation-scene" id="orientationScene">
+          <img src="Slothbot W Image.png" alt="SlothBot Logo" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card full-width" style="margin-top:20px;">
+    <h3>🌍 GPS Tracking</h3>
+    <div class="sub">Live Position · Colourful Map</div>
+    <div class="map-container" id="map"></div>
+    <div class="gps-stats" id="gpsStats">
+      <span>Lat <strong id="gpsLat">--</strong></span>
+      <span>Lon <strong id="gpsLon">--</strong></span>
+      <span>Alt <strong id="gpsAlt">--</strong> m</span>
+      <span>Sats <strong id="gpsSats">--</strong></span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  CONFIG – Channels 1, 2 and 3
+// ============================================================
+const CH1 = { id: 3426952, readKey: 'A2HC4A7NNG3LNGCH' };
+const CH2 = { id: 3434632, readKey: 'BRP7DG2R4FAUJJIW' };
+const CH3 = { id: 3434636, readKey: 'OZYLA7Y63DSQALXT' };
+const RESULTS = 8000;
+
+// ============================================================
+//  METRIC GROUPS (environmental)
+// ============================================================
+const GROUPS = [
+  { name: 'Temperature', unit: '°C', datasets: [
+      { key: 'shtTemp', label: 'SHT31', color: '#4ade80' },
+      { key: 'bmeTemp', label: 'BME680', color: '#fb923c' },
+    ] },
+  { name: 'Humidity', unit: '%', datasets: [
+      { key: 'shtHum', label: 'SHT31', color: '#60a5fa' },
+      { key: 'bmeHum', label: 'BME680', color: '#f472b6' },
+    ] },
+  { name: 'Pressure', unit: 'hPa', datasets: [
+      { key: 'bmePress', label: 'BME680', color: '#a78bfa' },
+    ] },
+  { name: 'Gas Resistance', unit: 'kΩ', datasets: [
+      { key: 'bmeGas', label: 'BME680', color: '#22d3ee' },
+    ] },
+  { name: 'eCO₂', unit: 'ppm', datasets: [
+      { key: 'ccsCO2', label: 'CCS811', color: '#f87171' },
+    ] },
+  { name: 'TVOC', unit: 'ppb', datasets: [
+      { key: 'ccsTVOC', label: 'CCS811', color: '#facc15' },
+    ] }
+];
+
+let mergedData = [];
+let charts = {};
+let batteryGauge = null, solarGauge = null;
+let batteryLineChart = null, solarLineChart = null;
+let batteryTrendChart = null, solarTrendChart = null;
+let isBatteryChart = false, isSolarChart = false;
+let accChartInstance = null;
+let lightChartInstance = null;
+
+// ============================================================
+//  BATTERY SOC (3S Li-ion curve)
+// ============================================================
+function voltageToSOC(voltage) {
+  const pts = [{v:12.6,soc:100},{v:12.3,soc:90},{v:12.0,soc:80},{v:11.7,soc:70},{v:11.4,soc:60},{v:11.1,soc:50},{v:10.8,soc:40},{v:10.5,soc:30},{v:10.2,soc:20},{v:9.9,soc:10},{v:9.0,soc:0}];
+  if (voltage >= pts[0].v) return 100;
+  if (voltage <= pts[pts.length-1].v) return 0;
+  for (let i=0; i<pts.length-1; i++) {
+    if (voltage <= pts[i].v && voltage >= pts[i+1].v) {
+      const t = (voltage - pts[i+1].v) / (pts[i].v - pts[i+1].v);
+      return pts[i+1].soc + t * (pts[i].soc - pts[i+1].soc);
+    }
+  }
+  return 0;
+}
+
+// ============================================================
+//  FETCH
+// ============================================================
+async function fetchChannels() {
+  try {
+    const url1 = `https://api.thingspeak.com/channels/${CH1.id}/feeds.json?api_key=${CH1.readKey}&results=${RESULTS}`;
+    const url2 = `https://api.thingspeak.com/channels/${CH2.id}/feeds.json?api_key=${CH2.readKey}&results=${RESULTS}`;
+    const url3 = `https://api.thingspeak.com/channels/${CH3.id}/feeds.json?api_key=${CH3.readKey}&results=${RESULTS}`;
+    const [r1, r2, r3] = await Promise.all([fetch(url1), fetch(url2), fetch(url3)]);
+    if (!r1.ok || !r2.ok || !r3.ok) throw new Error('HTTP error');
+    const [json1, json2, json3] = await Promise.all([r1.json(), r2.json(), r3.json()]);
+
+    const feeds1 = json1.feeds || [];
+    const feeds2 = json2.feeds || [];
+    const feeds3 = json3.feeds || [];
+
+    const data1 = feeds1.map(f => {
+      const t = new Date(f.created_at);
+      return { t, shtTemp: parseFloat(f.field1)||null, shtHum: parseFloat(f.field2)||null,
+        bmeTemp: parseFloat(f.field3)||null, bmeHum: parseFloat(f.field4)||null,
+        bmePress: parseFloat(f.field5)||null, bmeGas: parseFloat(f.field6)||null,
+        ccsCO2: parseFloat(f.field7)||null, ccsTVOC: parseFloat(f.field8)||null };
+    }).filter(r => !isNaN(r.t.getTime()));
+
+    const data2 = feeds2.map(f => {
+      const t = new Date(f.created_at);
+      return { t, solarV: parseFloat(f.field1)||null, solarA: parseFloat(f.field2)||null,
+        solarW: parseFloat(f.field3)||null, battV: parseFloat(f.field4)||null,
+        battA: parseFloat(f.field5)||null, battW: parseFloat(f.field6)||null,
+        sleepSec: parseFloat(f.field7)||null };
+    }).filter(r => !isNaN(r.t.getTime()));
+
+    const data3 = feeds3.map(f => {
+      const t = new Date(f.created_at);
+      return { t, lux: parseFloat(f.field1)||null, accX: parseFloat(f.field2)||null,
+        accY: parseFloat(f.field3)||null, accZ: parseFloat(f.field4)||null,
+        gpsLat: parseFloat(f.field5)||null, gpsLon: parseFloat(f.field6)||null,
+        gpsSats: parseFloat(f.field7)||null, gpsAlt: parseFloat(f.field8)||null };
+    }).filter(r => !isNaN(r.t.getTime()));
+
+    mergedData = mergeThree(data1, data2, data3);
+    renderAll();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function mergeThree(a,b,c) {
+  const combined = [...a,...b,...c];
+  combined.sort((x,y) => x.t.getTime() - y.t.getTime());
+  const res = [];
+  const tol = 60*1000;
+  for (const row of combined) {
+    if (res.length === 0) { res.push({...row}); continue; }
+    const last = res[res.length-1];
+    if (Math.abs(row.t.getTime() - last.t.getTime()) <= tol) {
+      Object.assign(last, row);
+    } else {
+      res.push({...row});
+    }
+  }
+  return res;
+}
+
+// ============================================================
+//  RENDER
+// ============================================================
+function renderAll() {
+  if (mergedData.length === 0) {
+    document.getElementById('gaugeRow').innerHTML = '<div style="color:#94a3b8;padding:20px;text-align:center;">No data</div>';
+    document.getElementById('envGrid').innerHTML = '';
+    return;
+  }
+
+  const labels = mergedData.map(r => r.t.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', second:'2-digit' }));
+
+  const gaugeRow = document.getElementById('gaugeRow');
+  gaugeRow.innerHTML = '';
+  gaugeRow.appendChild(createBatteryCard());
+  gaugeRow.appendChild(createSolarCard());
+
+  const envGrid = document.getElementById('envGrid');
+  envGrid.innerHTML = '';
+  GROUPS.forEach((group, idx) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<h3>${group.name} <span style="font-weight:400;font-size:13px;color:#64748b;">${group.unit}</span></h3>
+      <div class="sub">${group.datasets.map(d=>d.label).join(' · ')}</div>
+      <div class="chart-container"><canvas id="chart-${idx}"></canvas></div>`;
+    envGrid.appendChild(card);
+  });
+
+  // Battery gauge
+  const bG = document.getElementById('batteryGaugeCanvas').getContext('2d');
+  batteryGauge = createGreenGauge(bG);
+  const bT = document.getElementById('batteryTrendChart').getContext('2d');
+  batteryTrendChart = createTrendChart(bT, '#22c55e');
+  const bL = document.getElementById('batteryLineChart').getContext('2d');
+  batteryLineChart = createBatteryLineChart(bL, labels);
+
+  // Solar gauge
+  const sG = document.getElementById('solarGaugeCanvas').getContext('2d');
+  solarGauge = createStandardGauge(sG);
+  const sT = document.getElementById('solarTrendChart').getContext('2d');
+  solarTrendChart = createTrendChart(sT, '#f59e0b');
+  const sL = document.getElementById('solarLineChart').getContext('2d');
+  solarLineChart = createSolarLineChart(sL, labels);
+
+  // Environmental charts
+  GROUPS.forEach((group, idx) => {
+    const ctx = document.getElementById(`chart-${idx}`).getContext('2d');
+    const datasets = group.datasets.map(ds => {
+      const data = mergedData.map(r => (r[ds.key] !== null && Number.isFinite(r[ds.key])) ? r[ds.key] : null);
+      return { label: ds.label, data, borderColor: ds.color, backgroundColor: ds.color+'33',
+        borderWidth: 2, pointRadius: 2, tension: 0.2, spanGaps: true, fill: false };
+    });
+    const allVals = datasets.flatMap(d => d.data.filter(v => v !== null && Number.isFinite(v)));
+    const minVal = Math.min(...allVals), maxVal = Math.max(...allVals);
+    const pad = (maxVal - minVal) * 0.1;
+    if (charts[idx]) charts[idx].destroy();
+    charts[idx] = new Chart(ctx, {
+      type: 'line', data: { labels, datasets },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: '#94a3b8', font: { size: 10 }, boxWidth: 12, padding: 6 } } },
+        scales: {
+          x: { ticks: { color: '#94a3b8', maxTicksLimit: 10, font: { size: 9 } }, grid: { display: false } },
+          y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 9 } },
+               suggestedMin: Math.max(0, minVal - pad), suggestedMax: maxVal + pad }
+        }
+      }
+    });
+  });
+
+  // Accelerometer
+  const accCtx = document.getElementById('accChart').getContext('2d');
+  const accDatasets = ['accX','accY','accZ'].map((key,i) => ({
+    label: key.replace('acc',''),
+    data: mergedData.map(r => r[key] ?? null),
+    borderColor: ['#4ade80','#60a5fa','#fb923c'][i],
+    borderWidth: 2, pointRadius: 2, tension: 0.2, spanGaps: true, fill: false
+  }));
+  const accVals = accDatasets.flatMap(d => d.data.filter(v => v !== null && Number.isFinite(v)));
+  const accMin = Math.min(...accVals), accMax = Math.max(...accVals);
+  const accPad = (accMax - accMin) * 0.1;
+  if (accChartInstance) accChartInstance.destroy();
+  accChartInstance = new Chart(accCtx, {
+    type: 'line', data: { labels, datasets: accDatasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#94a3b8', font: { size: 9 } } } },
+      scales: {
+        x: { ticks: { color: '#94a3b8', maxTicksLimit: 8, font: { size: 8 } }, grid: { display: false } },
+        y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 8 } },
+             suggestedMin: accMin - accPad, suggestedMax: accMax + accPad }
+      }
+    }
+  });
+
+  // Light
+  const lightCtx = document.getElementById('lightChart').getContext('2d');
+  const lightData = mergedData.map(r => r.lux ?? null);
+  const lightVals = lightData.filter(v => v !== null && Number.isFinite(v));
+  const lMin = Math.min(...lightVals), lMax = Math.max(...lightVals);
+  const lPad = (lMax - lMin) * 0.1;
+  if (lightChartInstance) lightChartInstance.destroy();
+  lightChartInstance = new Chart(lightCtx, {
+    type: 'line', data: {
+      labels,
+      datasets: [{ label: 'Lux', data: lightData, borderColor: '#facc15', backgroundColor: '#facc1533',
+        borderWidth: 2, pointRadius: 2, tension: 0.2, spanGaps: true, fill: true }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#94a3b8', maxTicksLimit: 8, font: { size: 8 } }, grid: { display: false } },
+        y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 8 } },
+             suggestedMin: Math.max(0, lMin - lPad), suggestedMax: lMax + lPad }
+      }
+    }
+  });
+
+  updateGaugesAndStats();
+  setupToggles();
+  setupMap();
+  updateDateTime();
+}
+
+// ============================================================
+//  CREATE CARDS (with updated hardware specs)
+// ============================================================
+function createBatteryCard() {
+  const card = document.createElement('div'); card.className = 'card';
+  card.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:6px;">
+      <div>
+        <h3>🔋 Battery</h3>
+        <div class="sub">INA260 #2 · 3S8P · 24Ah · 259.2Wh · Samsung 30Q</div>
+      </div>
+      <button class="toggle-btn" id="batteryToggleBtn">Switch to Chart</button>
+    </div>
+    <div id="batteryGaugeContainer" class="gauge-container">
+      <div class="gauge-wrapper">
+        <div class="gauge-canvas"><canvas id="batteryGaugeCanvas"></canvas>
+          <div class="gauge-center"><div class="value" id="battVoltageDisplay">0.00</div><div class="unit">V</div>
+            <div class="sub" id="battSocDisplay">0% SoC</div></div>
+        </div>
+        <div class="gauge-stats" id="batteryStats">
+          <span class="stat">Current <strong id="battAStat">0.000</strong> A</span>
+          <span class="stat">Power <strong id="battWStat">0.00</strong> W</span>
+          <span class="stat">SoC <strong id="battPctStat">0.0</strong> %</span>
+        </div>
+      </div>
+      <div class="trend-container"><div class="sub" style="margin-bottom:4px;">Voltage Trend · 24H</div>
+        <div class="trend-chart"><canvas id="batteryTrendChart"></canvas></div>
+      </div>
+    </div>
+    <div id="batteryChartContainer" class="chart-container-view">
+      <div class="chart-container" style="height:200px;"><canvas id="batteryLineChart"></canvas></div>
+    </div>
+  `;
+  return card;
+}
+
+function createSolarCard() {
+  const card = document.createElement('div'); card.className = 'card';
+  card.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:6px;">
+      <div>
+        <h3>☀️ Solar</h3>
+        <div class="sub">INA260 #1 · 20W 12V Monocrystalline</div>
+      </div>
+      <button class="toggle-btn" id="solarToggleBtn">Switch to Chart</button>
+    </div>
+    <div id="solarGaugeContainer" class="gauge-container">
+      <div class="gauge-wrapper">
+        <div class="gauge-canvas"><canvas id="solarGaugeCanvas"></canvas>
+          <div class="gauge-center">
+            <div class="value" id="solarVoltageDisplay">0.0</div>
+            <div class="unit">V</div>
+            <div class="sub" id="solarStatusDisplay">--</div>
+          </div>
+        </div>
+        <div class="gauge-stats" id="solarStats">
+          <span class="stat">Power <strong id="solarWStat">0.00</strong> W</span>
+          <span class="stat">Current <strong id="solarAStat">0.000</strong> A</span>
+          <span class="stat">Today's Yield <strong id="solarYieldStat">0.0</strong> Wh</span>
+        </div>
+      </div>
+      <div class="trend-container"><div class="sub" style="margin-bottom:4px;">Solar Harvest · 24H</div>
+        <div class="trend-chart"><canvas id="solarTrendChart"></canvas></div>
+      </div>
+    </div>
+    <div id="solarChartContainer" class="chart-container-view">
+      <div class="chart-container" style="height:200px;"><canvas id="solarLineChart"></canvas></div>
+    </div>
+  `;
+  return card;
+}
+
+// ============================================================
+//  GAUGES
+// ============================================================
+function createGreenGauge(ctx) {
+  const steps=24, colors=[];
+  for (let i=0; i<steps; i++) {
+    const t=i/(steps-1);
+    const r=Math.round(74+(22-74)*t), g=Math.round(222+(101-222)*t), b=Math.round(128+(52-128)*t);
+    colors.push(`rgb(${r},${g},${b})`);
+  }
+  return new Chart(ctx, {type:'doughnut', data:{datasets:[{data:Array(steps).fill(1), backgroundColor:colors, borderWidth:0, circumference:270, rotation:-135}]},
+    options:{responsive:true, maintainAspectRatio:true, cutout:'78%', plugins:{legend:{display:false}, tooltip:{enabled:false}}}});
+}
+
+function createStandardGauge(ctx) {
+  const steps=24, red=[239,68,68], yellow=[250,204,21], green=[74,222,128], colors=[];
+  for (let i=0; i<steps; i++) {
+    const t=i/(steps-1);
+    let c; if (t<0.5) { const p=t/0.5; c=[red[0]+(yellow[0]-red[0])*p, red[1]+(yellow[1]-red[1])*p, red[2]+(yellow[2]-red[2])*p]; }
+    else { const p=(t-0.5)/0.5; c=[yellow[0]+(green[0]-yellow[0])*p, yellow[1]+(green[1]-yellow[1])*p, yellow[2]+(green[2]-yellow[2])*p]; }
+    colors.push(`rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`);
+  }
+  return new Chart(ctx, {type:'doughnut', data:{datasets:[{data:Array(steps).fill(1), backgroundColor:colors, borderWidth:0, circumference:270, rotation:-135}]},
+    options:{responsive:true, maintainAspectRatio:true, cutout:'78%', plugins:{legend:{display:false}, tooltip:{enabled:false}}}});
+}
+
+function createTrendChart(ctx, color) {
+  return new Chart(ctx, { type:'line', data:{ labels:[], datasets:[{ data:[], borderColor:color, borderWidth:2, pointRadius:0, tension:0.3, fill:false }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} },
+      scales:{ x:{ grid:{display:false}, ticks:{display:false} }, y:{ grid:{display:false}, ticks:{display:false} } } } });
+}
+
+function createBatteryLineChart(ctx, labels) {
+  return new Chart(ctx, { type:'line', data:{ labels, datasets:[
+    { label:'Voltage (V)', data:[], borderColor:'#3b82f6', borderWidth:2, pointRadius:2, tension:0.2 },
+    { label:'Current (A)', data:[], borderColor:'#8b5cf6', borderWidth:2, pointRadius:2, tension:0.2 },
+    { label:'Power (W)', data:[], borderColor:'#ec4899', borderWidth:2, pointRadius:2, tension:0.2 },
+    { label:'SoC (%)', data:[], borderColor:'#14b8a6', borderWidth:2, pointRadius:2, tension:0.2 },
+  ] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ color:'#94a3b8', font:{size:10} } } },
+    scales:{ x:{ ticks:{ color:'#94a3b8', maxTicksLimit:10, font:{size:9} }, grid:{display:false} },
+      y:{ grid:{ color:'#1e293b' }, ticks:{ color:'#94a3b8', font:{size:9} }, beginAtZero:true } } } });
+}
+
+function createSolarLineChart(ctx, labels) {
+  return new Chart(ctx, { type:'line', data:{ labels, datasets:[
+    { label:'Voltage (V)', data:[], borderColor:'#f59e0b', borderWidth:2, pointRadius:2, tension:0.2 },
+    { label:'Current (A)', data:[], borderColor:'#f97316', borderWidth:2, pointRadius:2, tension:0.2 },
+    { label:'Power (W)', data:[], borderColor:'#ef4444', borderWidth:2, pointRadius:2, tension:0.2 },
+  ] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ color:'#94a3b8', font:{size:10} } } },
+    scales:{ x:{ ticks:{ color:'#94a3b8', maxTicksLimit:10, font:{size:9} }, grid:{display:false} },
+      y:{ grid:{ color:'#1e293b' }, ticks:{ color:'#94a3b8', font:{size:9} }, beginAtZero:true } } } });
+}
+
+// ============================================================
+//  MAP (colourful dark)
+// ============================================================
+let map = null, mapMarker = null, mapPath = null, mapInitialized = false;
+
+function setupMap() {
+  if (document.getElementById('map') && !map) {
+    map = L.map('map', { zoomControl: true }).setView([43.6532, -79.3832], 13);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; CartoDB'
+    }).addTo(map);
+    mapMarker = L.marker([43.6532, -79.3832]).addTo(map);
+    mapInitialized = true;
+  }
+  updateMap();
+}
+
+function updateMap() {
+  if (!mapInitialized) return;
+  const pts = mergedData.filter(r => r.gpsLat && r.gpsLon && !(r.gpsLat===0 && r.gpsLon===0))
+    .map(r => ({ lat: r.gpsLat, lon: r.gpsLon }));
+  if (pts.length === 0) return;
+  const last = pts[pts.length-1];
+  mapMarker.setLatLng([last.lat, last.lon]);
+  map.panTo([last.lat, last.lon], { animate: true });
+  if (mapPath) map.removeLayer(mapPath);
+  mapPath = L.polyline(pts.map(p => [p.lat, p.lon]), { color: '#facc15', weight: 3, opacity: 0.8 }).addTo(map);
+}
+
+// ============================================================
+//  UPDATE (with correct battery capacity for runtime)
+// ============================================================
+function updateGaugesAndStats() {
+  if (mergedData.length === 0) return;
+  const last = mergedData[mergedData.length-1];
+
+  // Battery
+  const bV = last.battV ?? 0;
+  const bA = last.battA ?? 0;
+  const bW = last.battW ?? 0;
+  const soc = voltageToSOC(bV);
+  // Runtime calculation using 259.2Wh total capacity
+  const runtimeH = bA < -0.01 ? (259.2 * (soc/100)) / Math.abs(bW || 0.1) : 0;
+
+  document.getElementById('battVoltageDisplay').textContent = bV.toFixed(2);
+  document.getElementById('battSocDisplay').textContent = Math.round(soc) + '% SoC';
+  document.getElementById('battAStat').textContent = bA.toFixed(3);
+  document.getElementById('battWStat').textContent = bW.toFixed(2);
+  document.getElementById('battPctStat').textContent = soc.toFixed(1);
+
+  // We don't display runtime directly in the stats anymore, but keep for future use.
+  // If you want to show it, uncomment: console.log('Runtime:', runtimeH);
+
+  updateGaugeValue(batteryGauge, soc);
+
+  const trend = mergedData.slice(-30);
+  const tLabels = trend.map(r => r.t.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }));
+  batteryTrendChart.data.labels = tLabels;
+  batteryTrendChart.data.datasets[0].data = trend.map(r => r.battV);
+  batteryTrendChart.update('none');
+
+  const labels = mergedData.map(r => r.t.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', second:'2-digit' }));
+  batteryLineChart.data.labels = labels;
+  batteryLineChart.data.datasets[0].data = mergedData.map(r => r.battV ?? null);
+  batteryLineChart.data.datasets[1].data = mergedData.map(r => r.battA ?? null);
+  batteryLineChart.data.datasets[2].data = mergedData.map(r => r.battW ?? null);
+  batteryLineChart.data.datasets[3].data = mergedData.map(r => voltageToSOC(r.battV ?? 0));
+  batteryLineChart.update('none');
+
+  // Solar (showing VOLTAGE on gauge)
+  const sV = last.solarV ?? 0;
+  const sA = last.solarA ?? 0;
+  const sW = last.solarW ?? 0;
+  const maxSolarV = 18; // typical Vmp for a 12V panel
+  const sPct = Math.min(100, (sV / maxSolarV) * 100);
+
+  document.getElementById('solarVoltageDisplay').textContent = sV.toFixed(1);
+  document.getElementById('solarStatusDisplay').textContent = sV < 1.0 ? 'Night Mode' : 'Harvesting';
+  document.getElementById('solarWStat').textContent = sW.toFixed(2);
+  document.getElementById('solarAStat').textContent = sA.toFixed(3);
+  
+  const today = new Date().toISOString().slice(0,10);
+  const todayData = mergedData.filter(r => r.t.toISOString().slice(0,10) === today);
+  let yieldWh = 0;
+  for (let i=1; i<todayData.length; i++) {
+    const dt = (todayData[i].t - todayData[i-1].t) / 3600000;
+    if (dt > 0 && dt < 1) yieldWh += (todayData[i].solarW ?? 0) * dt;
+  }
+  document.getElementById('solarYieldStat').textContent = yieldWh.toFixed(2);
+
+  updateGaugeValue(solarGauge, sPct);
+
+  const sTrend = mergedData.slice(-30);
+  solarTrendChart.data.labels = sTrend.map(r => r.t.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }));
+  solarTrendChart.data.datasets[0].data = sTrend.map(r => r.solarW);
+  solarTrendChart.update('none');
+
+  solarLineChart.data.labels = labels;
+  solarLineChart.data.datasets[0].data = mergedData.map(r => r.solarV ?? null);
+  solarLineChart.data.datasets[1].data = mergedData.map(r => r.solarA ?? null);
+  solarLineChart.data.datasets[2].data = mergedData.map(r => r.solarW ?? null);
+  solarLineChart.update('none');
+
+  // Sleep
+  document.getElementById('sleepDisplay').textContent = ((last.sleepSec ?? 0) / 60).toFixed(1);
+
+  // GPS
+  document.getElementById('gpsLat').textContent = (last.gpsLat ?? 0).toFixed(6);
+  document.getElementById('gpsLon').textContent = (last.gpsLon ?? 0).toFixed(6);
+  document.getElementById('gpsAlt').textContent = (last.gpsAlt ?? 0).toFixed(1);
+  document.getElementById('gpsSats').textContent = last.gpsSats ?? 0;
+  updateMap();
+
+  // Logo orientation (tilt based on accelerometer)
+  updateOrientation(last.accX ?? 0, last.accY ?? 0, last.accZ ?? 0);
+}
+
+function updateGaugeValue(chart, percent) {
+  const clamped = Math.min(100, Math.max(0, percent));
+  const steps = chart.data.datasets[0].data.length;
+  const filled = Math.round((clamped/100)*steps);
+  const data = Array(steps).fill(1);
+  for (let i=0; i<filled; i++) data[i] = 1;
+  for (let i=filled; i<steps; i++) data[i] = 0;
+  chart.data.datasets[0].data = data;
+  chart.update();
+}
+
+// ============================================================
+//  LOGO ORIENTATION (tilt)
+// ============================================================
+function updateOrientation(ax, ay, az) {
+  const scene = document.getElementById('orientationScene');
+  if (!scene) return;
+  const norm = Math.sqrt(ax*ax + ay*ay + az*az);
+  if (norm < 0.001) return;
+  const roll = Math.atan2(ay, az) * 180 / Math.PI;
+  const pitch = Math.atan2(-ax, Math.sqrt(ay*ay + az*az)) * 180 / Math.PI;
+  const r = Math.max(-30, Math.min(30, roll));
+  const p = Math.max(-20, Math.min(20, pitch));
+  scene.style.transform = `rotateX(${r*0.5}deg) rotateY(${p*0.5}deg)`;
+}
+
+// ============================================================
+//  DATE/TIME
+// ============================================================
+function updateDateTime() {
+  const now = new Date();
+  document.getElementById('datetimeDisplay').textContent =
+    now.toLocaleString('en-US', { weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' });
+}
+
+// ============================================================
+//  TOGGLES
+// ============================================================
+function setupToggles() {
+  document.getElementById('batteryToggleBtn').addEventListener('click', () => {
+    isBatteryChart = !isBatteryChart;
+    toggleView('battery', isBatteryChart);
+  });
+  document.getElementById('solarToggleBtn').addEventListener('click', () => {
+    isSolarChart = !isSolarChart;
+    toggleView('solar', isSolarChart);
+  });
+}
+
+function toggleView(id, showChart) {
+  const g = document.getElementById(`${id}GaugeContainer`);
+  const c = document.getElementById(`${id}ChartContainer`);
+  const b = document.getElementById(`${id}ToggleBtn`);
+  if (showChart) { g.classList.add('hidden'); c.classList.add('active'); b.textContent = 'Switch to Gauge'; }
+  else { g.classList.remove('hidden'); c.classList.remove('active'); b.textContent = 'Switch to Chart'; }
+}
+
+// ============================================================
+//  EXPORT CSV
+// ============================================================
+document.getElementById('exportBtn').addEventListener('click', () => {
+  if (mergedData.length === 0) return alert('No data');
+  const keys = ['shtTemp','shtHum','bmeTemp','bmeHum','bmePress','bmeGas','ccsCO2','ccsTVOC',
+    'solarV','solarA','solarW','battV','battA','battW','sleepSec','lux','accX','accY','accZ','gpsLat','gpsLon','gpsSats','gpsAlt'];
+  const header = 'timestamp,' + keys.join(',') + ',battSoC';
+  const rows = mergedData.map(r => {
+    const ts = r.t.toISOString();
+    const vals = keys.map(k => r[k] ?? '').join(',');
+    return ts + ',' + vals + ',' + voltageToSOC(r.battV ?? 0).toFixed(1);
+  });
+  const csv = [header, ...rows].join('\n');
+  const blob = new Blob([csv], { type:'text/csv' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `slothbot_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(link); link.click(); document.body.removeChild(link);
+  URL.revokeObjectURL(link.href);
+});
+
+// ============================================================
+//  INIT
+// ============================================================
+document.getElementById('refreshBtn').addEventListener('click', fetchChannels);
+fetchChannels();
+setInterval(updateDateTime, 1000);
+</script>
+</body>
+</html>
