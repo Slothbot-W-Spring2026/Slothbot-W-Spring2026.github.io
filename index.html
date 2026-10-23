@@ -42,10 +42,11 @@
     padding:4px 14px; border-radius:20px; border:1px solid #334155;
   }
   .sleep-display strong{font-weight:700;}
-  .datetime{
+  .datetime, .last-updated{
     font-size: clamp(11px, 0.9vw, 14px); color:#94a3b8; background:#1e293b;
     padding:4px 14px; border-radius:20px; border:1px solid #334155;
   }
+  .last-updated { color: #4ade80; border-color: #4ade80; }
   .btn{
     background:#1e293b; color:#94a3b8; border:1px solid #334155;
     padding:6px 18px; border-radius:20px; cursor:pointer; font-size:13px;
@@ -112,10 +113,23 @@
   .card{
     background:#1e293b; border-radius:12px; padding:16px;
     border:1px solid #2d3a4f; display:flex; flex-direction:column; min-width: 0;
+    position: relative;
   }
-  .card h3{ font-size:15px; font-weight:600; color:#f1f5f9; margin-bottom:2px; }
+  .card h3{ font-size:15px; font-weight:600; color:#f1f5f9; margin-bottom:2px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
   .card .sub{ font-size:11px; color:#94a3b8; margin-bottom:8px; line-height:1.4; }
   .full-width{grid-column:1/-1;}
+
+  /* ---- Warnings ---- */
+  .ch-warn {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
 
   /* ---- Per-card range selector ---- */
   .range-selector { display: flex; gap: 4px; flex-wrap: wrap; margin: 6px 0 10px 0; }
@@ -152,9 +166,8 @@
   /* ---- Gauge styles ---- */
   .gauge-wrapper { display: flex; flex-direction: column; align-items: center; gap: 6px; flex:1; }
   .gauge-canvas {
-    position: relative; width: clamp(120px, 12vw, 150px); height: clamp(120px, 12vw, 150px); flex-shrink:0;
+    position: relative; width: 150px; height: 150px; flex-shrink:0;
   }
-  .gauge-canvas canvas { width:100% !important; height:100% !important; }
   .gauge-center {
     position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
     text-align:center; pointer-events:none;
@@ -168,15 +181,32 @@
     font-size:12px; color:#94a3b8; border:1px solid #2d3a4f;
   }
   .gauge-stats .stat strong { color:#f1f5f9; font-weight:500; }
+  
+  /* Toggle & Tab Buttons */
   .toggle-btn {
     background:#334155; border:none; color:#f1f5f9; padding:4px 14px;
     border-radius:20px; cursor:pointer; font-size:11px; margin-top:4px; align-self:flex-end;
   }
   .toggle-btn:hover { background:#475569; }
-  .gauge-container { display:flex; flex-direction:column; flex:1; }
-  .gauge-container.hidden { display:none; }
-  .chart-container-view { display:none; flex:1; }
-  .chart-container-view.active { display:block; }
+  
+  .tab-group { display: flex; gap: 4px; }
+  .tab-btn {
+    background: #0b1120; color: #64748b; border: 1px solid #2d3a4f;
+    padding: 4px 10px; border-radius: 12px; cursor: pointer;
+    font-size: 10px; font-weight: 600; transition: 0.15s;
+  }
+  .tab-btn:hover { color: #f1f5f9; border-color: #475569; }
+  .tab-btn.active {
+    background: #3b82f6; color: #fff; border-color: #3b82f6;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+  }
+
+  .gauge-container { display: none; flex-direction:column; flex:1; }
+  .gauge-container.active { display: flex; }
+  
+  .chart-container-view { display: none; flex:1; }
+  .chart-container-view.active { display: block; }
+  
   .trend-chart { height:70px; margin-top:6px; }
   .trend-container { margin-top:8px; }
 
@@ -197,20 +227,36 @@
   .charge-badge.error .dot { background:#ef4444; }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-  /* ---- Logo orientation ---- */
-  .logo-orientation-container {
-    display:flex; justify-content:center; align-items:center;
-    height: 220px; perspective:800px;
-    background:radial-gradient(ellipse at center, #1a2a3a 0%, #0b1120 100%);
-    border-radius:8px; overflow:hidden; position:relative;
+  /* ---- Dynamic Ultrasonic Orientation Scene ---- */
+  .ultrasonic-scene {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; min-height: 120px; max-height: 180px;
+    padding: 10px; background: #0f172a;
+    border-radius: 8px; border: 1px solid #2d3a4f;
+    overflow: hidden; position: relative;
   }
-  .logo-orientation-scene {
-    width:100%; height:100%; display:flex; justify-content:center; align-items:center;
-    transition:transform 0.15s ease-out;
+  .pillar {
+    width: clamp(8px, 2vw, 14px); height: 80%;
+    background: linear-gradient(to right, #1e293b, #475569, #1e293b);
+    border-radius: 4px; flex-shrink: 0; z-index: 2;
   }
-  .logo-orientation-scene img {
-    max-width:80%; max-height:80%; object-fit:contain;
-    border-radius:12px; box-shadow:0 0 30px rgba(74, 222, 128, 0.2);
+  .sensor-space {
+    display: flex; justify-content: center; align-items: center;
+    position: relative; height: 4px; border-top: 2px dashed #3b82f6;
+    margin: 0 5px; transition: flex 0.5s ease; z-index: 1;
+  }
+  .dist-text {
+    position: absolute; top: -24px; font-size: clamp(8px, 1vw, 11px); color: #60a5fa;
+    background: #0b1120; padding: 2px 8px; border-radius: 10px;
+    border: 1px solid #1e3a8a; white-space: nowrap;
+  }
+  .drone-center {
+    flex: 0 0 auto; z-index: 3; display: flex; flex-direction: column; align-items: center;
+  }
+  .drone-center img {
+    width: clamp(40px, 8vw, 60px); height: clamp(40px, 8vw, 60px); border-radius: 50%;
+    border: 2px solid #4ade80; box-shadow: 0 0 15px rgba(74,222,128,0.4);
+    background: #0b1120; object-fit: cover;
   }
 
   /* ---- Map ---- */
@@ -222,17 +268,65 @@
   .leaflet-control-attribution {
     background: rgba(15, 23, 42, 0.85) !important;
     color: #94a3b8 !important;
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 10px;
+    border-radius: 4px; padding: 2px 8px; font-size: 10px;
   }
   .leaflet-control-attribution a { color: #60a5fa !important; text-decoration: none; }
   .leaflet-control-attribution a:hover { text-decoration: underline; }
 
-  @media (max-width:700px) {
-    .header-container { flex-direction: column; align-items: flex-start; }
-    .global-range-bar { position: static; }
+  /* ---- Manual Control Panel ---- */
+  .control-panel {
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;
+    background: #0f172a; border-radius: 8px; padding: 16px; border: 1px solid #2d3a4f;
+    flex-wrap: wrap;
   }
+  .control-section { flex: 1 1 200px; min-width: 180px; }
+  .control-section h4 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .ctrl-btn {
+    background: #1e293b; border: 1px solid #334155; color: #f1f5f9;
+    padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px;
+    transition: 0.15s; flex: 1 1 auto;
+  }
+  .ctrl-btn:hover { background: #334155; }
+  .ctrl-btn.active { background: #3b82f6; border-color: #3b82f6; box-shadow: 0 0 10px rgba(59,130,246,0.4); }
+  
+  /* Toggle Switch Container */
+  .toggle-container {
+    display: flex; align-items: center; gap: 10px; margin-top: 5px;
+    background: #1e293b; padding: 8px 12px; border-radius: 8px; border: 1px solid #334155;
+  }
+  .toggle-label { font-size: 11px; color: #94a3b8; font-weight: bold; }
+  .switch {
+    position: relative; display: inline-block; width: 46px; height: 22px; flex-shrink: 0;
+  }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #475569; transition: .4s; border-radius: 24px;
+  }
+  .slider:before {
+    position: absolute; content: ""; height: 16px; width: 16px;
+    left: 3px; bottom: 3px; background-color: white; transition: .4s;
+    border-radius: 50%;
+  }
+  input:checked + .slider { background-color: #22c55e; }
+  input:checked + .slider:before { transform: translateX(24px); }
+
+  /* ---- Photo Gallery ---- */
+  .photo-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px; margin-top: 10px;
+  }
+  .photo-item {
+    background: #0f172a; border-radius: 8px; border: 1px solid #2d3a4f;
+    overflow: hidden; position: relative; aspect-ratio: 4/3;
+    display: flex; align-items: center; justify-content: center;
+    color: #475569; font-size: 12px; flex-direction: column; gap: 8px;
+  }
+  .photo-item img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+
 </style>
 </head>
 <body>
@@ -248,6 +342,7 @@
       <button class="btn" id="refreshBtn">⟳ Refresh</button>
       <button class="btn" id="exportBtn">⬇ Export CSV</button>
       <span class="datetime" id="datetimeDisplay"></span>
+      <span class="last-updated" id="lastUpdatedDisplay">Last Update: --:--:--</span>
       <span class="sleep-display">😴 Sleep <strong id="sleepDisplay">0.0</strong> min</span>
     </div>
   </div>
@@ -258,15 +353,14 @@
     <div class="range-selector" data-card="__global__"></div>
   </div>
 
-  <!-- POWER TILES: Battery | Solar | Drone -->
+  <!-- POWER TILES -->
   <div class="grid-3-power" id="gaugeRow"></div>
 
   <!-- Environmental charts -->
   <div class="grid" id="envGrid"></div>
 
-  <!-- Motion + Sloth + Sleep (4-column grid) -->
+  <!-- Motion + Orientation + Sleep -->
   <div class="grid-4">
-    <!-- Motion & Light (spans 2 cols) -->
     <div class="card span-2">
       <h3>📊 Motion &amp; Light</h3>
       <div class="sub">Accelerometer (g) · Ambient Light (lux)</div>
@@ -288,18 +382,25 @@
       </div>
     </div>
 
-    <!-- Sloth Orientation -->
+    <!-- Ultrasonic Orientation -->
     <div class="card">
-      <h3>🦥 Sloth Orientation</h3>
-      <div class="sub">Logo image · Tilt from accelerometer</div>
-      <div class="logo-orientation-container">
-        <div class="logo-orientation-scene" id="orientationScene">
-          <img src="Slothbot W Image.png" alt="SlothBot Logo" />
+      <h3>🦥 Sensor Orientation <span id="warnUltrasonic"></span></h3>
+      <div class="sub">Ultrasonic Distance (Left &amp; Right)</div>
+      <div class="ultrasonic-scene">
+        <div class="pillar"></div>
+        <div class="sensor-space" id="spaceL">
+          <div class="dist-text" id="distL">L: -- m</div>
         </div>
+        <div class="drone-center">
+          <img src="Slothbot W Image.png" alt="SlothBot" />
+        </div>
+        <div class="sensor-space" id="spaceR">
+          <div class="dist-text" id="distR">R: -- m</div>
+        </div>
+        <div class="pillar"></div>
       </div>
     </div>
 
-    <!-- Sleep Duration chart -->
     <div class="card">
       <h3>😴 Sleep Duration</h3>
       <div class="sub">Minutes · from Channel 2</div>
@@ -307,6 +408,77 @@
       <div class="chart-scroll">
         <div class="chart-inner" id="sleepWrapper" style="height:220px;"><canvas id="sleepChart"></canvas></div>
       </div>
+    </div>
+  </div>
+
+  <!-- MANUAL CONTROL & COMMANDS -->
+  <div class="card full-width" style="margin-top:20px;">
+    <h3>🎮 Manual Control &amp; Commands <span id="warnManual"></span></h3>
+    <div class="sub">Toggle settings locally, then push to ThingSpeak to avoid rate limits.</div>
+    
+    <div id="controlUnlocked" class="control-panel">
+      
+      <!-- Manual Mode Toggle -->
+      <div class="control-section">
+        <h4>Deep Sleep Mode</h4>
+        <div class="toggle-container">
+          <span class="toggle-label">OFF</span>
+          <label class="switch">
+            <input type="checkbox" id="manualModeToggle" onchange="updateLocalState()">
+            <span class="slider"></span>
+          </label>
+          <span class="toggle-label">ON</span>
+        </div>
+        <div style="font-size:10px; color:#64748b; margin-top:5px;">ON = Disable Deep Sleep</div>
+      </div>
+
+      <div class="control-section">
+        <h4>Motor Control</h4>
+        <div class="btn-group">
+          <button class="ctrl-btn motor-btn" id="btnForward" onclick="setMotorState('F')">⬆ Forward</button>
+          <button class="ctrl-btn motor-btn" id="btnStop" onclick="setMotorState('S')">⏹ Stop</button>
+          <button class="ctrl-btn motor-btn" id="btnBackward" onclick="setMotorState('B')">⬇ Backward</button>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <h4>Drone Commands</h4>
+        <div class="toggle-container">
+          <span class="toggle-label">OFF</span>
+          <label class="switch">
+            <input type="checkbox" id="dronePowerToggle" onchange="updateLocalState()">
+            <span class="slider"></span>
+          </label>
+          <span class="toggle-label">ON</span>
+        </div>
+        <div style="font-size:10px; color:#64748b; margin-top:5px;">Drone Switch ON_OFF Hall Effect</div>
+        
+        <div class="toggle-container" style="margin-top:8px;">
+          <span class="toggle-label">OFF</span>
+          <label class="switch">
+            <input type="checkbox" id="surveillanceToggle" onchange="updateLocalState()">
+            <span class="slider"></span>
+          </label>
+          <span class="toggle-label">ON</span>
+        </div>
+        <div style="font-size:10px; color:#64748b; margin-top:5px;">📸 Perform Surveillance</div>
+
+        <div class="toggle-container" style="margin-top:8px;">
+          <span class="toggle-label">OFF</span>
+          <label class="switch">
+            <input type="checkbox" id="manualChargeToggle" onchange="updateLocalState()">
+            <span class="slider"></span>
+          </label>
+          <span class="toggle-label">ON</span>
+        </div>
+        <div style="font-size:10px; color:#64748b; margin-top:5px;">🔋 Manual Charging</div>
+      </div>
+      
+      <!-- PUSH BUTTON -->
+      <div style="width: 100%; margin-top: 15px; display: flex; justify-content: flex-end;">
+        <button class="btn" id="pushCommandsBtn" onclick="pushCommands()" style="background:#3b82f6; color:#fff; font-weight:bold; transition:0.3s; min-width: 200px;">🚀 Push Commands to Bot</button>
+      </div>
+
     </div>
   </div>
 
@@ -320,36 +492,31 @@
       <span>Lon <strong id="gpsLon">-80.54280196</strong></span>
     </div>
   </div>
+
+  <!-- DRONE PHOTOS -->
+  <div class="card full-width" style="margin-top:20px;">
+    <h3>📸 Drone Surveillance Photos <span id="warnPhotos"></span></h3>
+    <div class="sub">Images captured during surveillance missions</div>
+    <div class="photo-grid" id="photoGrid">
+      <!-- Photo placeholders -->
+      <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
+      <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
+      <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
+      <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
+    </div>
+  </div>
 </div>
 
 <script>
 // ============================================================
 //  CONFIG
 // ============================================================
-// -------- ThingSpeak Channels --------
-// CH1: Environment  (SHT31, BME680, CCS811)
-// CH2: Power        (Main Battery, Solar, Sleep Duration)
-// CH3: Motion/GPS   (TSL2591, Accelerometer, GPS)
-// CH4: DRONE + SGP30   <-- create later; code handles empty gracefully
-//      field1 = droneV      (V)
-//      field2 = droneA      (A)
-//      field3 = droneW      (W)
-//      field4 = droneStatus (0=Idle, 1=Charging, 2=Full, 3=Error)
-//      field5 = sgpCO2      (ppm)   <-- SGP30 eCO₂
-//      field6 = sgpTVOC     (ppb)   <-- SGP30 TVOC
-// ============================================================
 const CH1 = { id: 3426952, readKey: 'A2HC4A7NNG3LNGCH' };
-const CH2 = { id: 3434632, readKey: 'BRP7DG2R4FAUJJIW' };
+const CH2 = { id: 3434632, readKey: 'BRP7DG2R4FAUJJIW', writeKey: '8MCWI2C98A14LO77' };
 const CH3 = { id: 3434636, readKey: 'OZYLA7Y63DSQALXT' };
-
-// -------- CH4: Drone Battery + SGP30 --------
-// Fill in the real id and readKey once the channel is created.
-// Set id=0 (default) to skip fetching and show placeholder values.
-const CH4 = { id: 0, readKey: '' };
+const CH4 = { id: 3546855, readKey: 'JS64UFMUYA0FHLWX', writeKey: 'C9R6J0GY73BZKUJJ' }; 
 
 const RESULTS = 8000;
-
-// ---- STATIC MAP POSITION ----
 const STATIC_LAT = 43.47043572;
 const STATIC_LON = -80.54280196;
 const STATIC_ZOOM = 15;
@@ -386,7 +553,6 @@ const RANGE_LABELS = { '24H': '24H', '7D': '7D', '1M': '1M', '6M': '6M', '1Y': '
 const RANGES = ['24H', '7D', '1M', '6M', '1Y', 'ALL'];
 const RANGE_HOURS = { '24H': 24, '7D': 24*7, '1M': 24*30, '6M': 24*180, '1Y': 24*365, 'ALL': Infinity };
 
-// Charging status labels
 const CHARGE_STATUS = {
   0: { label: 'Idle',     cls: 'idle' },
   1: { label: 'Charging', cls: 'charging' },
@@ -395,7 +561,7 @@ const CHARGE_STATUS = {
 };
 
 // ============================================================
-//  STATE
+//  STATE (Defaults to 24H)
 // ============================================================
 let allMergedData = [];
 let globalRange = '24H';
@@ -409,7 +575,7 @@ const cardStates = {
   tvoc:        { range: '24H', chart: null },
   battery:     { range: '24H', chart: null, gauge: null, trend: null },
   solar:       { range: '24H', chart: null, gauge: null, trend: null },
-  drone:       { range: '24H', chart: null, gauge: null, trend: null },
+  drone:       { range: '24H', chart: null, gauge: null, trend: null, chargeChart: null },
   acc:         { range: '24H', chart: null },
   light:       { range: '24H', chart: null },
   sleep:       { range: '24H', chart: null },
@@ -417,16 +583,146 @@ const cardStates = {
 
 let isBatteryChart = false;
 let isSolarChart = false;
-let isDroneChart = false;
+
+// Local pending command states
+let pendingMotor = 'S';
+let pendingSleep = 0;
+let pendingSurv = 0;
+let pendingPower = 0;
+let pendingCharge = 0;
+let cooldownTimer = null;
+
+// ============================================================
+//  LOCAL STATE MANAGEMENT
+// ============================================================
+function setMotorState(cmd) {
+  pendingMotor = cmd;
+  document.querySelectorAll('.motor-btn').forEach(b => b.classList.remove('active'));
+  if (cmd === 'F') document.getElementById('btnForward').classList.add('active');
+  if (cmd === 'B') document.getElementById('btnBackward').classList.add('active');
+  if (cmd === 'S') document.getElementById('btnStop').classList.add('active');
+}
+
+function updateLocalState() {
+  pendingSleep = document.getElementById('manualModeToggle').checked ? 1 : 0;
+  pendingSurv = document.getElementById('surveillanceToggle').checked ? 1 : 0;
+  pendingPower = document.getElementById('dronePowerToggle').checked ? 1 : 0;
+  pendingCharge = document.getElementById('manualChargeToggle').checked ? 1 : 0;
+}
+
+// Function to read the latest cloud state and apply it to the UI on load
+function syncUIState() {
+  if (allMergedData.length === 0) return;
+  const last = allMergedData[allMergedData.length-1];
+  
+  // Read Sleep Mode (CH2 Field 8)
+  if (last.manualMode !== undefined && last.manualMode !== null) {
+    document.getElementById('manualModeToggle').checked = (last.manualMode == 1);
+    pendingSleep = last.manualMode;
+  }
+  
+  // Read Motor (CH4 Field 4)
+  if (last.motorCmd) {
+    const cmd = last.motorCmd.trim().toUpperCase();
+    if (cmd === 'F' || cmd === 'B' || cmd === 'S') {
+      setMotorState(cmd);
+    }
+  }
+  
+  // Read Surveillance (CH4 Field 5)
+  if (last.surveillance !== undefined && last.surveillance !== null) {
+    document.getElementById('surveillanceToggle').checked = (last.surveillance == 1);
+    pendingSurv = last.surveillance == 1 ? 1 : 0;
+  }
+  
+  // Read Drone Hall Effect Switch (CH4 Field 6)
+  if (last.dronePower !== undefined && last.dronePower !== null) {
+    document.getElementById('dronePowerToggle').checked = (last.dronePower == 1);
+    pendingPower = last.dronePower == 1 ? 1 : 0;
+  }
+
+  // Read Manual Charging (CH4 Field 2) - If it's 1 or 0, it's a command. If it's a float like 45.2, it's just battery data.
+  if (last.dronePct !== undefined && last.dronePct !== null) {
+    if (last.dronePct == 1 || last.dronePct == 0) {
+       document.getElementById('manualChargeToggle').checked = (last.dronePct == 1);
+       pendingCharge = last.dronePct == 1 ? 1 : 0;
+    } else {
+       // It's normal battery data, so keep the charge toggle off by default
+       document.getElementById('manualChargeToggle').checked = false;
+       pendingCharge = 0;
+    }
+  }
+}
+
+async function pushCommands() {
+  const btn = document.getElementById('pushCommandsBtn');
+  if (btn.disabled) return;
+
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+  btn.style.background = '#64748b'; 
+
+  try {
+    // 1. Send to CH4 (Motor, Drone Switch, Surveillance, Manual Charge)
+    let url4 = `https://api.thingspeak.com/update?api_key=${CH4.writeKey}`;
+    url4 += `&field4=${pendingMotor}`;
+    url4 += `&field5=${pendingSurv}`;
+    url4 += `&field6=${pendingPower}`;
+    url4 += `&field2=${pendingCharge}`; // Using F2 for Manual Charge Command
+    
+    // 2. Send to CH2 (Deep Sleep)
+    let url2 = `https://api.thingspeak.com/update?api_key=${CH2.writeKey}&field8=${pendingSleep}`;
+
+    await Promise.all([fetch(url4), fetch(url2)]);
+    
+    // Start 15-second cooldown
+    let timeLeft = 15;
+    btn.textContent = `Wait ${timeLeft}s...`;
+    
+    if (cooldownTimer) clearInterval(cooldownTimer);
+    cooldownTimer = setInterval(() => {
+      timeLeft--;
+      if (timeLeft > 0) {
+        btn.textContent = `Wait ${timeLeft}s...`;
+      } else {
+        clearInterval(cooldownTimer);
+        btn.textContent = '🚀 Push Commands to Bot';
+        btn.disabled = false;
+        btn.style.background = '#3b82f6'; 
+      }
+    }, 1000);
+    
+  } catch (err) {
+    console.error("Error sending commands:", err);
+    alert("Failed to send commands. Please check network.");
+    btn.textContent = '🚀 Push Commands to Bot';
+    btn.disabled = false;
+    btn.style.background = '#3b82f6';
+  }
+}
 
 // ============================================================
 //  HELPERS
 // ============================================================
 function filterByRange(data, range) {
+  if (!data || data.length === 0) return [];
+  if (range === 'ALL') return data;
+
   const hours = RANGE_HOURS[range];
-  if (!hours || hours === Infinity) return data;
-  const cutoff = Date.now() - hours * 3600 * 1000;
-  return data.filter(r => r.t.getTime() >= cutoff);
+  const latestTime = data[data.length - 1].t.getTime();
+  if (isNaN(latestTime)) return data;
+
+  const cutoff = latestTime - (hours * 3600 * 1000);
+  const filtered = data.filter(r => r.t.getTime() >= cutoff);
+
+  // If the bot was offline and the window has very few points,
+  // extend backwards so the chart still shows a meaningful 24H of
+  // *active* data instead of a sparse handful of points.
+  const minPoints = (range === '24H') ? 20
+                  : (range === '7D')  ? 30
+                  : 5;
+
+  return filtered.length >= minPoints ? filtered : data.slice(-minPoints);
 }
 
 function formatXLabel(date, range) {
@@ -455,7 +751,7 @@ function computeChartWidth(numPoints, containerWidth) {
 }
 
 function renderScrollableChart(canvas, wrapper, labels, datasets, yMin, yMax, rawDates) {
-  const containerW = wrapper.parentElement.clientWidth;
+  const containerW = wrapper.parentElement ? wrapper.parentElement.clientWidth : 400;
   const width  = computeChartWidth(labels.length, containerW);
   const height = wrapper.clientHeight || 240;
 
@@ -471,9 +767,7 @@ function renderScrollableChart(canvas, wrapper, labels, datasets, yMin, yMax, ra
     type: 'line',
     data: { labels, datasets },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: false,
+      responsive: true, maintainAspectRatio: false, animation: false,
       interaction: { mode: 'index', intersect: false, axis: 'x' },
       plugins: {
         legend: { labels: { color: '#94a3b8', font: { size: 10 }, boxWidth: 12, padding: 6 } },
@@ -503,11 +797,8 @@ function renderScrollableChart(canvas, wrapper, labels, datasets, yMin, yMax, ra
       },
       scales: {
         x: {
-          ticks: {
-            color: '#94a3b8',
-            maxTicksLimit: Math.max(6, Math.min(20, Math.floor(labels.length / 5) || 6)),
-            font: { size: 9 }, maxRotation: 45, autoSkip: true
-          },
+          type: 'category', // <--- ADDED: This removes the time gaps for offline periods
+          ticks: { color: '#94a3b8', maxTicksLimit: Math.max(6, Math.min(20, Math.floor(labels.length / 5) || 6)), font: { size: 9 }, maxRotation: 45, autoSkip: true },
           grid: { display: false }
         },
         y: yOpts
@@ -578,12 +869,15 @@ function initGlobalRangeBar() {
       updateBatteryChart();
       updateSolarChart();
       updateDroneChart();
+      
+      const activeTab = document.querySelector('.drone-tab-btn.active');
+      if (activeTab && activeTab.dataset.view === 'charge') updateDroneChargeChart();
     };
   });
 }
 
 // ============================================================
-//  BATTERY SOC (3S Li-ion curve)
+//  BATTERY SOC
 // ============================================================
 function voltageToSOC(v) {
   const pts = [{v:12.6,soc:100},{v:12.3,soc:90},{v:12.0,soc:80},{v:11.7,soc:70},{v:11.4,soc:60},{v:11.1,soc:50},{v:10.8,soc:40},{v:10.5,soc:30},{v:10.2,soc:20},{v:9.9,soc:10},{v:9.0,soc:0}];
@@ -599,7 +893,7 @@ function voltageToSOC(v) {
 }
 
 // ============================================================
-//  FETCH — CH1, CH2, CH3 always; CH4 (drone + SGP30) if configured
+//  FETCH
 // ============================================================
 async function fetchChannels() {
   try {
@@ -608,20 +902,27 @@ async function fetchChannels() {
       `https://api.thingspeak.com/channels/${CH2.id}/feeds.json?api_key=${CH2.readKey}&results=${RESULTS}`,
       `https://api.thingspeak.com/channels/${CH3.id}/feeds.json?api_key=${CH3.readKey}&results=${RESULTS}`,
     ];
-
-    const hasCH4 = CH4.id && CH4.readKey;
-    if (hasCH4) {
+    
+    if (CH4.id && CH4.readKey) {
       urls.push(`https://api.thingspeak.com/channels/${CH4.id}/feeds.json?api_key=${CH4.readKey}&results=${RESULTS}`);
     }
 
-    const responses = await Promise.all(urls.map(u => fetch(u)));
-    if (responses.some(r => !r.ok)) throw new Error('HTTP error');
-    const jsons = await Promise.all(responses.map(r => r.json()));
+    const responses = [];
+    for (const url of urls) {
+      try {
+        const res = await fetch(url);
+        if (res.ok) responses.push(await res.json());
+        else responses.push({ feeds: [] });
+      } catch (err) {
+        responses.push({ feeds: [] });
+      }
+      await new Promise(r => setTimeout(r, 300));
+    }
 
-    const feeds1 = jsons[0].feeds || [];
-    const feeds2 = jsons[1].feeds || [];
-    const feeds3 = jsons[2].feeds || [];
-    const feeds4 = hasCH4 ? (jsons[3].feeds || []) : [];
+    const feeds1 = (responses[0] && responses[0].feeds) ? responses[0].feeds : [];
+    const feeds2 = (responses[1] && responses[1].feeds) ? responses[1].feeds : [];
+    const feeds3 = (responses[2] && responses[2].feeds) ? responses[2].feeds : [];
+    const feeds4 = (responses[3] && responses[3].feeds) ? responses[3].feeds : [];
 
     const data1 = feeds1.map(f => {
       const t = new Date(f.created_at);
@@ -636,7 +937,7 @@ async function fetchChannels() {
       return { t, solarV: parseFloat(f.field1)||null, solarA: parseFloat(f.field2)||null,
         solarW: parseFloat(f.field3)||null, battV: parseFloat(f.field4)||null,
         battA: parseFloat(f.field5)||null, battW: parseFloat(f.field6)||null,
-        sleepSec: parseFloat(f.field7)||null };
+        sleepSec: parseFloat(f.field7)||null, manualMode: parseInt(f.field8)||0 };
     }).filter(r => !isNaN(r.t.getTime()));
 
     const data3 = feeds3.map(f => {
@@ -644,35 +945,50 @@ async function fetchChannels() {
       return { t, lux: parseFloat(f.field1)||null, accX: parseFloat(f.field2)||null,
         accY: parseFloat(f.field3)||null, accZ: parseFloat(f.field4)||null,
         gpsLat: parseFloat(f.field5)||null, gpsLon: parseFloat(f.field6)||null,
-        gpsSats: parseFloat(f.field7)||null, gpsAlt: parseFloat(f.field8)||null };
+        sgpCO2: parseFloat(f.field7)||null, sgpTVOC: parseFloat(f.field8)||null };
     }).filter(r => !isNaN(r.t.getTime()));
 
-    // CH4 – Drone (field1..4) + SGP30 (field5..6)
     const data4 = feeds4.map(f => {
       const t = new Date(f.created_at);
       return {
         t,
         droneV:      parseFloat(f.field1)||null,
-        droneA:      parseFloat(f.field2)||null,
-        droneW:      parseFloat(f.field3)||null,
-        droneStatus: (f.field4 !== undefined && f.field4 !== null && f.field4 !== '')
-                       ? parseInt(f.field4) : null,
-        sgpCO2:      parseFloat(f.field5)||null,
-        sgpTVOC:     parseFloat(f.field6)||null
+        dronePct:    parseFloat(f.field2)||null, // Could be % OR manual charge cmd
+        droneStatus: (f.field3 !== undefined && f.field3 !== null && f.field3 !== '') ? parseInt(f.field3) : null,
+        motorCmd:    f.field4 || null,
+        surveillance:f.field5 || null,
+        dronePower:  f.field6 || null
       };
     }).filter(r => !isNaN(r.t.getTime()));
 
     allMergedData = mergeN([data1, data2, data3, data4]);
+    
+    // Sync toggles with latest state on load
+    syncUIState();
+
     renderAll();
-  } catch (err) { console.error(err); }
+    
+    if (allMergedData.length > 0) {
+      const latestTime = allMergedData[allMergedData.length-1].t;
+      document.getElementById('lastUpdatedDisplay').textContent = 'Last Update: ' + latestTime.toLocaleString();
+    } else {
+      document.getElementById('lastUpdatedDisplay').textContent = 'Last Update: No Data';
+    }
+
+  } catch (err) { 
+    console.error(err); 
+    document.getElementById('lastUpdatedDisplay').textContent = 'Last Update: Error';
+    renderAll(); 
+  }
 }
 
-// Merge any number of arrays by timestamp (within 60s)
 function mergeN(arrays) {
   const combined = [].concat(...arrays);
   combined.sort((x,y) => x.t.getTime() - y.t.getTime());
   const res = [];
-  const tol = 60*1000;
+  // widened from 60 s → 5 min so sequential CH1–CH4 uploads (with 20 s
+  // ThingSpeak gaps + network latency) always merge into one row.
+  const tol = 5 * 60 * 1000;
   for (const row of combined) {
     if (res.length === 0) { res.push({...row}); continue; }
     const last = res[res.length-1];
@@ -718,24 +1034,68 @@ function renderAll() {
   const sleepSel = document.querySelector('.range-selector[data-card="sleep"]');
   if (sleepSel) sleepSel.innerHTML = buildRangeButtonsHTML('sleep');
 
-  createBatteryGaugeAndTrend();
-  createSolarGaugeAndTrend();
-  createDroneGaugeAndTrend();
+  setTimeout(() => {
+    try { setupDroneTabs(); } catch(e){ console.error(e); }
+    try { setupToggles(); } catch(e){ console.error(e); }
+    ['temperature','humidity','pressure','gas','eco2','tvoc','battery','solar','drone','acc','light','sleep'].forEach(attachRangeHandlers);
 
-  ['temperature','humidity','pressure','gas','eco2','tvoc','battery','solar','drone','acc','light','sleep'].forEach(attachRangeHandlers);
+    try { createBatteryGaugeAndTrend(); } catch(e){ console.error(e); }
+    try { createSolarGaugeAndTrend(); } catch(e){ console.error(e); }
+    try { createDroneGaugeAndTrend(); } catch(e){ console.error(e); }
 
-  ['temperature','humidity','pressure','gas','eco2','tvoc'].forEach(updateEnvCard);
-  updateBatteryChart();
-  updateSolarChart();
-  updateDroneChart();
-  updateAccChart();
-  updateLightChart();
-  updateSleepChart();
+    try { ['temperature','humidity','pressure','gas','eco2','tvoc'].forEach(c => updateEnvCard(c)); } catch(e){ console.error(e); }
+    try { updateBatteryChart(); } catch(e){ console.error(e); }
+    try { updateSolarChart(); } catch(e){ console.error(e); }
+    try { updateDroneChart(); } catch(e){ console.error(e); }
+    try { updateAccChart(); } catch(e){ console.error(e); }
+    try { updateLightChart(); } catch(e){ console.error(e); }
+    try { updateSleepChart(); } catch(e){ console.error(e); }
 
-  updateGaugesAndStats();
-  setupToggles();
-  setupMap();
-  updateDateTime();
+    try { updateGaugesAndStats(); } catch(e){ console.error(e); }
+    try { setupMap(); } catch(e){ console.error(e); }
+    try { updateDateTime(); } catch(e){ console.error(e); }
+    try { updatePhotoGallery(); } catch(e){ console.error(e); }
+
+    window.dispatchEvent(new Event('resize'));
+  }, 300); 
+}
+
+// ============================================================
+//  CHANNEL WARNING HELPER
+// ============================================================
+function getCHWarning(ch, type) {
+  let isMissing = false;
+  if (ch === 4) {
+    if (type === 'read' && (!CH4.id || !CH4.readKey)) isMissing = true;
+    if (type === 'write' && !CH4.writeKey) isMissing = true;
+  }
+  return isMissing ? '<span class="ch-warn">⚠️ CH4 Not Configured</span>' : '';
+}
+
+function applyChannelWarnings() {
+  const warnManual = document.getElementById('warnManual');
+  if (warnManual) warnManual.innerHTML = getCHWarning(4, 'write');
+  
+  const warnUltrasonic = document.getElementById('warnUltrasonic');
+  if (warnUltrasonic) warnUltrasonic.innerHTML = getCHWarning(4, 'read');
+
+  const warnPhotos = document.getElementById('warnPhotos');
+  if (warnPhotos) warnPhotos.innerHTML = getCHWarning(4, 'read');
+}
+
+// ============================================================
+//  PHOTO GALLERY
+// ============================================================
+function updatePhotoGallery() {
+  const grid = document.getElementById('photoGrid');
+  if (!grid) return;
+  
+  grid.innerHTML = `
+    <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
+    <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
+    <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
+    <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
+  `;
 }
 
 // ============================================================
@@ -760,8 +1120,9 @@ function updateEnvCard(cardKey) {
   });
 
   const allVals = datasets.flatMap(d => d.data.filter(v => v !== null && Number.isFinite(v)));
-  let minVal = 0, maxVal = 1;
-  if (allVals.length) { minVal = Math.min(...allVals); maxVal = Math.max(...allVals); }
+  let minVal = Infinity, maxVal = -Infinity;
+  allVals.forEach(v => { if (v < minVal) minVal = v; if (v > maxVal) maxVal = v; });
+  if (minVal === Infinity) { minVal = 0; maxVal = 1; }
   const pad = (maxVal - minVal) * 0.1 || 1;
 
   if (state.chart) state.chart.destroy();
@@ -782,9 +1143,10 @@ function createBatteryCard() {
       </div>
       <button class="toggle-btn" id="batteryToggleBtn">Chart</button>
     </div>
-    <div id="batteryGaugeContainer" class="gauge-container">
+    <div id="batteryGaugeContainer" class="gauge-container active">
       <div class="gauge-wrapper">
-        <div class="gauge-canvas"><canvas id="batteryGaugeCanvas"></canvas>
+        <div class="gauge-canvas">
+          <canvas id="batteryGaugeCanvas" width="150" height="150"></canvas>
           <div class="gauge-center">
             <div class="value" id="battVoltageDisplay">0.00</div>
             <div class="unit">V</div>
@@ -831,11 +1193,12 @@ function updateBatteryChart() {
   const canvas = document.getElementById('batteryLineChart');
   if (!wrapper || !canvas) return;
 
+  // FIX: spanGaps:true added so any remaining nulls do not render as gaps
   const datasets = [
-    { label:'Voltage (V)', data: data.map(r => r.battV ?? null), borderColor:'#3b82f6', borderWidth:2, pointRadius:2, tension:0.2 },
-    { label:'Current (A)', data: data.map(r => r.battA ?? null), borderColor:'#8b5cf6', borderWidth:2, pointRadius:2, tension:0.2 },
-    { label:'Power (W)',   data: data.map(r => r.battW ?? null), borderColor:'#ec4899', borderWidth:2, pointRadius:2, tension:0.2 },
-    { label:'SoC (%)',     data: data.map(r => voltageToSOC(r.battV ?? 0)), borderColor:'#14b8a6', borderWidth:2, pointRadius:2, tension:0.2 },
+    { label:'Voltage (V)', data: data.map(r => r.battV ?? null), borderColor:'#3b82f6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
+    { label:'Current (A)', data: data.map(r => r.battA ?? null), borderColor:'#8b5cf6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
+    { label:'Power (W)',   data: data.map(r => r.battW ?? null), borderColor:'#ec4899', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
+    { label:'SoC (%)',     data: data.map(r => voltageToSOC(r.battV ?? 0)), borderColor:'#14b8a6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
   ];
 
   if (state.chart) state.chart.destroy();
@@ -855,9 +1218,10 @@ function createSolarCard() {
       </div>
       <button class="toggle-btn" id="solarToggleBtn">Chart</button>
     </div>
-    <div id="solarGaugeContainer" class="gauge-container">
+    <div id="solarGaugeContainer" class="gauge-container active">
       <div class="gauge-wrapper">
-        <div class="gauge-canvas"><canvas id="solarGaugeCanvas"></canvas>
+        <div class="gauge-canvas">
+          <canvas id="solarGaugeCanvas" width="150" height="150"></canvas>
           <div class="gauge-center">
             <div class="value" id="solarVoltageDisplay">0.0</div>
             <div class="unit">V</div>
@@ -904,10 +1268,11 @@ function updateSolarChart() {
   const canvas = document.getElementById('solarLineChart');
   if (!wrapper || !canvas) return;
 
+  // FIX: spanGaps:true added
   const datasets = [
-    { label:'Voltage (V)', data: data.map(r => r.solarV ?? null), borderColor:'#f59e0b', borderWidth:2, pointRadius:2, tension:0.2 },
-    { label:'Current (A)', data: data.map(r => r.solarA ?? null), borderColor:'#f97316', borderWidth:2, pointRadius:2, tension:0.2 },
-    { label:'Power (W)',   data: data.map(r => r.solarW ?? null), borderColor:'#ef4444', borderWidth:2, pointRadius:2, tension:0.2 },
+    { label:'Voltage (V)', data: data.map(r => r.solarV ?? null), borderColor:'#f59e0b', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
+    { label:'Current (A)', data: data.map(r => r.solarA ?? null), borderColor:'#f97316', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
+    { label:'Power (W)',   data: data.map(r => r.solarW ?? null), borderColor:'#ef4444', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
   ];
 
   if (state.chart) state.chart.destroy();
@@ -915,7 +1280,7 @@ function updateSolarChart() {
 }
 
 // ============================================================
-//  DRONE BATTERY CARD (CH4 fields 1-4)
+//  DRONE BATTERY CARD
 // ============================================================
 function createDroneCard() {
   const card = document.createElement('div'); card.className = 'card';
@@ -923,14 +1288,20 @@ function createDroneCard() {
   card.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:6px;">
       <div>
-        <h3>🚁 Drone Battery</h3>
-        <div class="sub">CH4 · 3S 11.1V · 3Ah · 33.3Wh${notConfigured ? ' · ⚠️ CH4 not configured' : ''}</div>
+        <h3>🚁 🔋 Drone Battery ${getCHWarning(4, 'read')}</h3>
+        <div class="sub">CH4 · Drone Telemetry</div>
       </div>
-      <button class="toggle-btn" id="droneToggleBtn">Chart</button>
+      <div class="tab-group">
+        <button class="tab-btn drone-tab-btn active" data-view="gauge">Gauge</button>
+        <button class="tab-btn drone-tab-btn" data-view="trend">Trend</button>
+        <button class="tab-btn drone-tab-btn" data-view="charge">Charge</button>
+      </div>
     </div>
-    <div id="droneGaugeContainer" class="gauge-container">
+    
+    <div id="droneGaugeContainer" class="gauge-container active">
       <div class="gauge-wrapper">
-        <div class="gauge-canvas"><canvas id="droneGaugeCanvas"></canvas>
+        <div class="gauge-canvas">
+          <canvas id="droneGaugeCanvas" width="150" height="150"></canvas>
           <div class="gauge-center">
             <div class="value" id="droneVoltageDisplay">--</div>
             <div class="unit">V</div>
@@ -938,8 +1309,6 @@ function createDroneCard() {
           </div>
         </div>
         <div class="gauge-stats">
-          <span class="stat">A <strong id="droneAStat">--</strong></span>
-          <span class="stat">W <strong id="droneWStat">--</strong></span>
           <span class="stat">SoC <strong id="dronePctStat">--</strong>%</span>
         </div>
         <div style="margin-top:8px;display:flex;justify-content:center;" id="droneStatusRow">
@@ -948,16 +1317,22 @@ function createDroneCard() {
           </span>
         </div>
       </div>
-      <div class="trend-container">
-        <div class="sub" style="margin-bottom:4px;">Voltage Trend · 24H</div>
-        <div class="trend-chart"><canvas id="droneTrendChart"></canvas></div>
-      </div>
     </div>
+
     <div id="droneChartContainer" class="chart-container-view">
       <div class="range-selector" data-card="drone">${buildRangeButtonsHTML('drone')}</div>
       <div class="chart-scroll">
         <div class="chart-inner" id="droneWrapper" style="height:250px;">
           <canvas id="droneLineChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div id="droneChargeContainer" class="chart-container-view">
+      <div class="sub" style="margin-bottom:4px;">Charging Duration per Day (Hours)</div>
+      <div class="chart-scroll">
+        <div class="chart-inner" id="droneChargeWrapper" style="height:250px;">
+          <canvas id="droneChargeChart"></canvas>
         </div>
       </div>
     </div>
@@ -982,15 +1357,72 @@ function updateDroneChart() {
   const canvas = document.getElementById('droneLineChart');
   if (!wrapper || !canvas) return;
 
+  // FIX: spanGaps:true added
   const datasets = [
-    { label:'Voltage (V)', data: data.map(r => r.droneV ?? null), borderColor:'#a78bfa', borderWidth:2, pointRadius:2, tension:0.2 },
-    { label:'Current (A)', data: data.map(r => r.droneA ?? null), borderColor:'#f472b6', borderWidth:2, pointRadius:2, tension:0.2 },
-    { label:'Power (W)',   data: data.map(r => r.droneW ?? null), borderColor:'#fb7185', borderWidth:2, pointRadius:2, tension:0.2 },
-    { label:'SoC (%)',     data: data.map(r => r.droneV ? voltageToSOC(r.droneV) : null), borderColor:'#14b8a6', borderWidth:2, pointRadius:2, tension:0.2 },
+    { label:'Voltage (V)', data: data.map(r => r.droneV ?? null), borderColor:'#a78bfa', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
+    { label:'Battery (%)', data: data.map(r => r.dronePct ?? null), borderColor:'#14b8a6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
   ];
 
   if (state.chart) state.chart.destroy();
   state.chart = renderScrollableChart(canvas, wrapper, labels, datasets, 0, undefined, rawDates);
+}
+
+function updateDroneChargeChart() {
+  const state = cardStates.drone;
+  const data = filterByRange(allMergedData, state.range);
+  if (!data.length) return;
+
+  const dailyCharge = {};
+
+  for (let i = 1; i < data.length; i++) {
+    const prev = data[i-1];
+    const curr = data[i];
+    const dtHours = (curr.t - prev.t) / (1000 * 60 * 60);
+
+    if (dtHours > 0 && dtHours < 1 && prev.droneStatus === 1) {
+      const day = curr.t.toISOString().slice(0, 10);
+      dailyCharge[day] = (dailyCharge[day] || 0) + dtHours;
+    }
+  }
+
+  const labels = Object.keys(dailyCharge).sort();
+  const values = labels.map(d => dailyCharge[d].toFixed(2));
+
+  const wrapper = document.getElementById('droneChargeWrapper');
+  const canvas = document.getElementById('droneChargeChart');
+  if (!wrapper || !canvas) return;
+
+  const containerW = wrapper.parentElement.clientWidth;
+  wrapper.style.width = Math.max(containerW || 400, labels.length * 60) + 'px';
+  wrapper.style.height = '250px';
+
+  if (state.chargeChart) state.chargeChart.destroy();
+  const ctx = canvas.getContext('2d');
+  
+  state.chargeChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Charging (hours)',
+        data: values,
+        backgroundColor: '#3b82f6',
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: (ctx) => `${ctx.parsed.y} hours` } }
+      },
+      scales: {
+        x: { type: 'category', ticks: { color: '#94a3b8' }, grid: { display: false } },
+        y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' }, beginAtZero: true }
+      }
+    }
+  });
 }
 
 // ============================================================
@@ -1013,8 +1445,9 @@ function updateAccChart() {
     borderWidth: 2, pointRadius: 2, pointHoverRadius: 5, tension: 0.2, spanGaps: true, fill: false
   }));
   const allVals = datasets.flatMap(d => d.data.filter(v => v !== null && Number.isFinite(v)));
-  let minVal = -1, maxVal = 1;
-  if (allVals.length) { minVal = Math.min(...allVals); maxVal = Math.max(...allVals); }
+  let minVal = Infinity, maxVal = -Infinity;
+  allVals.forEach(v => { if (v < minVal) minVal = v; if (v > maxVal) maxVal = v; });
+  if (minVal === Infinity) { minVal = -1; maxVal = 1; }
   const pad = (maxVal - minVal) * 0.1 || 1;
 
   if (state.chart) state.chart.destroy();
@@ -1034,8 +1467,9 @@ function updateLightChart() {
 
   const lightData = data.map(r => r.lux ?? null);
   const vals = lightData.filter(v => v !== null && Number.isFinite(v));
-  let minVal = 0, maxVal = 1;
-  if (vals.length) { minVal = Math.min(...vals); maxVal = Math.max(...vals); }
+  let minVal = Infinity, maxVal = -Infinity;
+  vals.forEach(v => { if (v < minVal) minVal = v; if (v > maxVal) maxVal = v; });
+  if (minVal === Infinity) { minVal = 0; maxVal = 1; }
   const pad = (maxVal - minVal) * 0.1 || 1;
 
   const datasets = [{
@@ -1064,8 +1498,9 @@ function updateSleepChart() {
 
   const sleepData = data.map(r => (r.sleepSec !== null && Number.isFinite(r.sleepSec)) ? (r.sleepSec/60) : null);
   const vals = sleepData.filter(v => v !== null && Number.isFinite(v));
-  let minVal = 0, maxVal = 1;
-  if (vals.length) { minVal = Math.min(...vals); maxVal = Math.max(...vals); }
+  let minVal = Infinity, maxVal = -Infinity;
+  vals.forEach(v => { if (v < minVal) minVal = v; if (v > maxVal) maxVal = v; });
+  if (minVal === Infinity) { minVal = 0; maxVal = 1; }
   const pad = (maxVal - minVal) * 0.1 || 1;
 
   const datasets = [{
@@ -1083,33 +1518,69 @@ function updateSleepChart() {
 // ============================================================
 //  GAUGE BUILDERS
 // ============================================================
-function createGreenGauge(ctx) {
-  const steps=24, colors=[];
-  for (let i=0; i<steps; i++) {
-    const t=i/(steps-1);
-    const r=Math.round(74+(22-74)*t), g=Math.round(222+(101-222)*t), b=Math.round(128+(52-128)*t);
-    colors.push(`rgb(${r},${g},${b})`);
+function trackColors(steps, isGreen) {
+  const colors = [];
+  for (let i = 0; i < steps; i++) {
+    const t = i / (steps - 1);
+    let c;
+    if (isGreen) {
+      c = [74 + (22 - 74) * t, 222 + (101 - 222) * t, 128 + (52 - 128) * t];
+    } else {
+      const red = [239,68,68], yellow=[250,204,21], green=[74,222,128];
+      if (t < 0.5) {
+        const p = t / 0.5;
+        c = [red[0]+(yellow[0]-red[0])*p, red[1]+(yellow[1]-red[1])*p, red[2]+(yellow[2]-red[2])*p];
+      } else {
+        const p = (t - 0.5) / 0.5;
+        c = [yellow[0]+(green[0]-yellow[0])*p, yellow[1]+(green[1]-yellow[1])*p, yellow[2]+(green[2]-yellow[2])*p];
+      }
+    }
+    colors.push(`rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`);
   }
-  return new Chart(ctx, {type:'doughnut', data:{datasets:[{data:Array(steps).fill(1), backgroundColor:colors, borderWidth:0, circumference:270, rotation:-135}]},
-    options:{responsive:true, maintainAspectRatio:true, cutout:'78%', plugins:{legend:{display:false}, tooltip:{enabled:false}}}});
+  return colors;
+}
+
+function createGreenGauge(ctx) {
+  const steps = 24;
+  const colors = trackColors(steps, true);
+  const chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: { datasets: [{ data: Array(steps).fill(1), backgroundColor: colors, borderWidth: 0, circumference: 270, rotation: -135 }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '78%', plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: false }
+  });
+  chart.data.datasets[0].originalColors = colors;
+  return chart;
 }
 
 function createStandardGauge(ctx) {
-  const steps=24, red=[239,68,68], yellow=[250,204,21], green=[74,222,128], colors=[];
-  for (let i=0; i<steps; i++) {
-    const t=i/(steps-1);
-    let c; if (t<0.5) { const p=t/0.5; c=[red[0]+(yellow[0]-red[0])*p, red[1]+(yellow[1]-red[1])*p, red[2]+(yellow[2]-red[2])*p]; }
-    else { const p=(t-0.5)/0.5; c=[yellow[0]+(green[0]-yellow[0])*p, yellow[1]+(green[1]-yellow[1])*p, yellow[2]+(green[2]-yellow[2])*p]; }
-    colors.push(`rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`);
-  }
-  return new Chart(ctx, {type:'doughnut', data:{datasets:[{data:Array(steps).fill(1), backgroundColor:colors, borderWidth:0, circumference:270, rotation:-135}]},
-    options:{responsive:true, maintainAspectRatio:true, cutout:'78%', plugins:{legend:{display:false}, tooltip:{enabled:false}}}});
+  const steps = 24;
+  const colors = trackColors(steps, false);
+  const chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: { datasets: [{ data: Array(steps).fill(1), backgroundColor: colors, borderWidth: 0, circumference: 270, rotation: -135 }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '78%', plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: false }
+  });
+  chart.data.datasets[0].originalColors = colors;
+  return chart;
+}
+
+function updateGaugeValue(chart, percent) {
+  if (!chart) return;
+  const clamped = Math.min(100, Math.max(0, percent));
+  const steps = chart.data.datasets[0].data.length;
+  const filled = Math.round((clamped / 100) * steps);
+  
+  const originalColors = chart.data.datasets[0].originalColors;
+  const newColors = originalColors.map((c, i) => i < filled ? c : '#334155');
+  
+  chart.data.datasets[0].backgroundColor = newColors;
+  chart.update('none');
 }
 
 function createTrendChart(ctx, color) {
   return new Chart(ctx, { type:'line', data:{ labels:[], datasets:[{ data:[], borderColor:color, borderWidth:2, pointRadius:0, tension:0.3, fill:false }] },
     options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} },
-      scales:{ x:{ grid:{display:false}, ticks:{display:false} }, y:{ grid:{display:false}, ticks:{display:false} } } } });
+      scales:{ x:{ type:'category', grid:{display:false}, ticks:{display:false} }, y:{ grid:{display:false}, ticks:{display:false} } } } });
 }
 
 // ============================================================
@@ -1136,7 +1607,7 @@ function setupMap() {
 function updateMap() { /* static – nothing to update */ }
 
 // ============================================================
-//  UPDATE GAUGES + STATS
+//  UPDATE GAUGES + STATS + ULTRASONIC SCENE
 // ============================================================
 function updateGaugesAndStats() {
   if (allMergedData.length === 0) return;
@@ -1191,23 +1662,18 @@ function updateGaugesAndStats() {
 
   // ---- Drone Battery (CH4) ----
   const dV = last.droneV;
-  const dA = last.droneA;
-  const dW = last.droneW;
+  const dPct = last.dronePct;
   const dStat = last.droneStatus;
 
   if (dV !== null && dV !== undefined) {
-    const dSoc = voltageToSOC(dV);
+    const dSoc = (dPct !== null && dPct !== undefined && dPct > 1) ? dPct : voltageToSOC(dV);
     if ($('droneVoltageDisplay')) $('droneVoltageDisplay').textContent = dV.toFixed(2);
     if ($('droneSocDisplay'))     $('droneSocDisplay').textContent = Math.round(dSoc) + '% SoC';
-    if ($('droneAStat'))          $('droneAStat').textContent = (dA ?? 0).toFixed(3);
-    if ($('droneWStat'))          $('droneWStat').textContent = (dW ?? 0).toFixed(2);
     if ($('dronePctStat'))        $('dronePctStat').textContent = dSoc.toFixed(1);
     if (cardStates.drone.gauge)   updateGaugeValue(cardStates.drone.gauge, dSoc);
   } else {
     if ($('droneVoltageDisplay')) $('droneVoltageDisplay').textContent = '--';
     if ($('droneSocDisplay'))     $('droneSocDisplay').textContent = '--% SoC';
-    if ($('droneAStat'))          $('droneAStat').textContent = '--';
-    if ($('droneWStat'))          $('droneWStat').textContent = '--';
     if ($('dronePctStat'))        $('dronePctStat').textContent = '--';
   }
 
@@ -1231,6 +1697,23 @@ function updateGaugesAndStats() {
     cardStates.drone.trend.update('none');
   }
 
+  // ---- Ultrasonic Scene ----
+  const uL = last.ultraLeft;
+  const uR = last.ultraRight;
+  
+  if (uL !== null && uR !== null && uL > 0 && uR > 0) {
+    if ($('distL')) $('distL').textContent = `L: ${(uL/100).toFixed(2)} m`;
+    if ($('distR')) $('distR').textContent = `R: ${(uR/100).toFixed(2)} m`;
+    
+    if ($('spaceL')) $('spaceL').style.flex = uL;
+    if ($('spaceR')) $('spaceR').style.flex = uR;
+  } else {
+    if ($('distL')) $('distL').textContent = 'L: -- m';
+    if ($('distR')) $('distR').textContent = 'R: -- m';
+    if ($('spaceL')) $('spaceL').style.flex = 1;
+    if ($('spaceR')) $('spaceR').style.flex = 1;
+  }
+
   // ---- Sleep ----
   if ($('sleepDisplay')) $('sleepDisplay').textContent = ((last.sleepSec ?? 0) / 60).toFixed(1);
 
@@ -1241,22 +1724,11 @@ function updateGaugesAndStats() {
   updateOrientation(last.accX ?? 0, last.accY ?? 0, last.accZ ?? 0);
 }
 
-function updateGaugeValue(chart, percent) {
-  const clamped = Math.min(100, Math.max(0, percent));
-  const steps = chart.data.datasets[0].data.length;
-  const filled = Math.round((clamped/100)*steps);
-  const data = Array(steps).fill(1);
-  for (let i=0; i<filled; i++) data[i] = 1;
-  for (let i=filled; i<steps; i++) data[i] = 0;
-  chart.data.datasets[0].data = data;
-  chart.update();
-}
-
 // ============================================================
-//  SLOTH ORIENTATION
+//  SLOTH ORIENTATION (Tilt)
 // ============================================================
 function updateOrientation(ax, ay, az) {
-  const scene = document.getElementById('orientationScene');
+  const scene = document.querySelector('.ultrasonic-scene');
   if (!scene) return;
   const norm = Math.sqrt(ax*ax + ay*ay + az*az);
   if (norm < 0.001) return;
@@ -1264,7 +1736,7 @@ function updateOrientation(ax, ay, az) {
   const pitch = Math.atan2(-ax, Math.sqrt(ay*ay + az*az)) * 180 / Math.PI;
   const r = Math.max(-30, Math.min(30, roll));
   const p = Math.max(-20, Math.min(20, pitch));
-  scene.style.transform = `rotateX(${r*0.5}deg) rotateY(${p*0.5}deg)`;
+  scene.style.transform = `rotateX(${r*0.1}deg) rotateY(${p*0.1}deg)`;
 }
 
 // ============================================================
@@ -1277,12 +1749,11 @@ function updateDateTime() {
 }
 
 // ============================================================
-//  TOGGLES (Battery / Solar / Drone)
+//  TOGGLES (Battery / Solar / Drone Tabs)
 // ============================================================
 function setupToggles() {
   const bBtn = document.getElementById('batteryToggleBtn');
   const sBtn = document.getElementById('solarToggleBtn');
-  const dBtn = document.getElementById('droneToggleBtn');
   if (bBtn) bBtn.onclick = () => {
     isBatteryChart = !isBatteryChart;
     toggleView('battery', isBatteryChart);
@@ -1293,11 +1764,6 @@ function setupToggles() {
     toggleView('solar', isSolarChart);
     if (isSolarChart) setTimeout(updateSolarChart, 50);
   };
-  if (dBtn) dBtn.onclick = () => {
-    isDroneChart = !isDroneChart;
-    toggleView('drone', isDroneChart);
-    if (isDroneChart) setTimeout(updateDroneChart, 50);
-  };
 }
 
 function toggleView(id, showChart) {
@@ -1305,8 +1771,33 @@ function toggleView(id, showChart) {
   const c = document.getElementById(`${id}ChartContainer`);
   const b = document.getElementById(`${id}ToggleBtn`);
   if (!g || !c || !b) return;
-  if (showChart) { g.classList.add('hidden'); c.classList.add('active'); b.textContent = 'Gauge'; }
-  else { g.classList.remove('hidden'); c.classList.remove('active'); b.textContent = 'Chart'; }
+  if (showChart) { g.classList.remove('active'); c.classList.add('active'); b.textContent = 'Gauge'; }
+  else { g.classList.add('active'); c.classList.remove('active'); b.textContent = 'Chart'; }
+}
+
+function setupDroneTabs() {
+  const btns = document.querySelectorAll('.drone-tab-btn');
+  btns.forEach(btn => {
+    btn.onclick = () => {
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const view = btn.dataset.view;
+      
+      document.getElementById('droneGaugeContainer').classList.remove('active');
+      document.getElementById('droneChartContainer').classList.remove('active');
+      document.getElementById('droneChargeContainer').classList.remove('active');
+
+      if (view === 'gauge') {
+        document.getElementById('droneGaugeContainer').classList.add('active');
+      } else if (view === 'trend') {
+        document.getElementById('droneChartContainer').classList.add('active');
+        updateDroneChart();
+      } else if (view === 'charge') {
+        document.getElementById('droneChargeContainer').classList.add('active');
+        updateDroneChargeChart();
+      }
+    };
+  });
 }
 
 // ============================================================
@@ -1317,15 +1808,14 @@ document.getElementById('exportBtn').addEventListener('click', () => {
   const keys = ['shtTemp','shtHum','bmeTemp','bmeHum','bmePress','bmeGas',
                 'ccsCO2','ccsTVOC','sgpCO2','sgpTVOC',
                 'solarV','solarA','solarW','battV','battA','battW','sleepSec',
-                'droneV','droneA','droneW','droneStatus',
-                'lux','accX','accY','accZ','gpsLat','gpsLon','gpsSats','gpsAlt'];
-  const header = 'timestamp,' + keys.join(',') + ',battSoC,droneSoC';
+                'droneV','dronePct','droneStatus','ultraLeft','ultraRight',
+                'lux','accX','accY','accZ','gpsLat','gpsLon'];
+  const header = 'timestamp,' + keys.join(',') + ',battSoC';
   const rows = allMergedData.map(r => {
     const ts = r.t.toISOString();
     const vals = keys.map(k => r[k] ?? '').join(',');
     const battSoc = voltageToSOC(r.battV ?? 0).toFixed(1);
-    const droneSoc = (r.droneV !== null && r.droneV !== undefined) ? voltageToSOC(r.droneV).toFixed(1) : '';
-    return ts + ',' + vals + ',' + battSoc + ',' + droneSoc;
+    return ts + ',' + vals + ',' + battSoc;
   });
   const csv = [header, ...rows].join('\n');
   const blob = new Blob([csv], { type:'text/csv' });
@@ -1341,10 +1831,12 @@ document.getElementById('exportBtn').addEventListener('click', () => {
 // ============================================================
 document.getElementById('refreshBtn').addEventListener('click', fetchChannels);
 
-initGlobalRangeBar();
-
-fetchChannels();
-setInterval(updateDateTime, 1000);
+window.addEventListener('load', () => {
+  initGlobalRangeBar();
+  applyChannelWarnings();
+  fetchChannels();
+  setInterval(updateDateTime, 1000);
+});
 
 let resizeTimer;
 window.addEventListener('resize', () => {
@@ -1353,7 +1845,10 @@ window.addEventListener('resize', () => {
     ['temperature','humidity','pressure','gas','eco2','tvoc','acc','light','sleep'].forEach(updateCardChart);
     if (isBatteryChart) updateBatteryChart();
     if (isSolarChart) updateSolarChart();
-    if (isDroneChart) updateDroneChart();
+    
+    const activeTab = document.querySelector('.drone-tab-btn.active');
+    if (activeTab && activeTab.dataset.view === 'trend') updateDroneChart();
+    if (activeTab && activeTab.dataset.view === 'charge') updateDroneChargeChart();
   }, 250);
 });
 </script>
