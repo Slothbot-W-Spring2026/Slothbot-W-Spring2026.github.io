@@ -181,14 +181,14 @@
     font-size:12px; color:#94a3b8; border:1px solid #2d3a4f;
   }
   .gauge-stats .stat strong { color:#f1f5f9; font-weight:500; }
-  
+
   /* Toggle & Tab Buttons */
   .toggle-btn {
     background:#334155; border:none; color:#f1f5f9; padding:4px 14px;
     border-radius:20px; cursor:pointer; font-size:11px; margin-top:4px; align-self:flex-end;
   }
   .toggle-btn:hover { background:#475569; }
-  
+
   .tab-group { display: flex; gap: 4px; }
   .tab-btn {
     background: #0b1120; color: #64748b; border: 1px solid #2d3a4f;
@@ -203,10 +203,10 @@
 
   .gauge-container { display: none; flex-direction:column; flex:1; }
   .gauge-container.active { display: flex; }
-  
+
   .chart-container-view { display: none; flex:1; }
   .chart-container-view.active { display: block; }
-  
+
   .trend-chart { height:70px; margin-top:6px; }
   .trend-container { margin-top:8px; }
 
@@ -289,7 +289,7 @@
   }
   .ctrl-btn:hover { background: #334155; }
   .ctrl-btn.active { background: #3b82f6; border-color: #3b82f6; box-shadow: 0 0 10px rgba(59,130,246,0.4); }
-  
+
   /* Toggle Switch Container */
   .toggle-container {
     display: flex; align-items: center; gap: 10px; margin-top: 5px;
@@ -385,7 +385,7 @@
     <!-- Ultrasonic Orientation -->
     <div class="card">
       <h3>🦥 Sensor Orientation <span id="warnUltrasonic"></span></h3>
-      <div class="sub">Ultrasonic Distance (Left &amp; Right)</div>
+      <div class="sub">Ultrasonic Distance (Left &amp; Right, meters)</div>
       <div class="ultrasonic-scene">
         <div class="pillar"></div>
         <div class="sensor-space" id="spaceL">
@@ -415,9 +415,9 @@
   <div class="card full-width" style="margin-top:20px;">
     <h3>🎮 Manual Control &amp; Commands <span id="warnManual"></span></h3>
     <div class="sub">Toggle settings locally, then push to ThingSpeak to avoid rate limits.</div>
-    
+
     <div id="controlUnlocked" class="control-panel">
-      
+
       <!-- Manual Mode Toggle -->
       <div class="control-section">
         <h4>Deep Sleep Mode</h4>
@@ -452,7 +452,7 @@
           <span class="toggle-label">ON</span>
         </div>
         <div style="font-size:10px; color:#64748b; margin-top:5px;">Drone Switch ON_OFF Hall Effect</div>
-        
+
         <div class="toggle-container" style="margin-top:8px;">
           <span class="toggle-label">OFF</span>
           <label class="switch">
@@ -473,7 +473,7 @@
         </div>
         <div style="font-size:10px; color:#64748b; margin-top:5px;">🔋 Manual Charging</div>
       </div>
-      
+
       <!-- PUSH BUTTON -->
       <div style="width: 100%; margin-top: 15px; display: flex; justify-content: flex-end;">
         <button class="btn" id="pushCommandsBtn" onclick="pushCommands()" style="background:#3b82f6; color:#fff; font-weight:bold; transition:0.3s; min-width: 200px;">🚀 Push Commands to Bot</button>
@@ -498,7 +498,6 @@
     <h3>📸 Drone Surveillance Photos <span id="warnPhotos"></span></h3>
     <div class="sub">Images captured during surveillance missions</div>
     <div class="photo-grid" id="photoGrid">
-      <!-- Photo placeholders -->
       <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
       <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
       <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
@@ -514,7 +513,7 @@
 const CH1 = { id: 3426952, readKey: 'A2HC4A7NNG3LNGCH' };
 const CH2 = { id: 3434632, readKey: 'BRP7DG2R4FAUJJIW', writeKey: '8MCWI2C98A14LO77' };
 const CH3 = { id: 3434636, readKey: 'OZYLA7Y63DSQALXT' };
-const CH4 = { id: 3546855, readKey: 'JS64UFMUYA0FHLWX', writeKey: 'C9R6J0GY73BZKUJJ' }; 
+const CH4 = { id: 3546855, readKey: 'JS64UFMUYA0FHLWX', writeKey: 'C9R6J0GY73BZKUJJ' };
 
 const RESULTS = 8000;
 const STATIC_LAT = 43.47043572;
@@ -561,7 +560,7 @@ const CHARGE_STATUS = {
 };
 
 // ============================================================
-//  STATE (Defaults to 24H)
+//  STATE
 // ============================================================
 let allMergedData = [];
 let globalRange = '24H';
@@ -584,7 +583,6 @@ const cardStates = {
 let isBatteryChart = false;
 let isSolarChart = false;
 
-// Local pending command states
 let pendingMotor = 'S';
 let pendingSleep = 0;
 let pendingSurv = 0;
@@ -604,53 +602,45 @@ function setMotorState(cmd) {
 }
 
 function updateLocalState() {
-  pendingSleep = document.getElementById('manualModeToggle').checked ? 1 : 0;
-  pendingSurv = document.getElementById('surveillanceToggle').checked ? 1 : 0;
-  pendingPower = document.getElementById('dronePowerToggle').checked ? 1 : 0;
+  pendingSleep  = document.getElementById('manualModeToggle').checked  ? 1 : 0;
+  pendingSurv   = document.getElementById('surveillanceToggle').checked ? 1 : 0;
+  pendingPower  = document.getElementById('dronePowerToggle').checked   ? 1 : 0;
   pendingCharge = document.getElementById('manualChargeToggle').checked ? 1 : 0;
 }
 
-// Function to read the latest cloud state and apply it to the UI on load
+// [v3] Simplified — CH4 F2 is now 0/1 command only, so no heuristic needed
 function syncUIState() {
   if (allMergedData.length === 0) return;
   const last = allMergedData[allMergedData.length-1];
-  
-  // Read Sleep Mode (CH2 Field 8)
+
+  // Manual Mode (CH2 F8)
   if (last.manualMode !== undefined && last.manualMode !== null) {
     document.getElementById('manualModeToggle').checked = (last.manualMode == 1);
-    pendingSleep = last.manualMode;
+    pendingSleep = last.manualMode == 1 ? 1 : 0;
   }
-  
-  // Read Motor (CH4 Field 4)
+
+  // Motor (CH4 F4)
   if (last.motorCmd) {
     const cmd = last.motorCmd.trim().toUpperCase();
-    if (cmd === 'F' || cmd === 'B' || cmd === 'S') {
-      setMotorState(cmd);
-    }
+    if (cmd === 'F' || cmd === 'B' || cmd === 'S') setMotorState(cmd);
   }
-  
-  // Read Surveillance (CH4 Field 5)
+
+  // Surveillance (CH4 F5)
   if (last.surveillance !== undefined && last.surveillance !== null) {
     document.getElementById('surveillanceToggle').checked = (last.surveillance == 1);
     pendingSurv = last.surveillance == 1 ? 1 : 0;
   }
-  
-  // Read Drone Hall Effect Switch (CH4 Field 6)
+
+  // Drone Power (CH4 F6)
   if (last.dronePower !== undefined && last.dronePower !== null) {
     document.getElementById('dronePowerToggle').checked = (last.dronePower == 1);
     pendingPower = last.dronePower == 1 ? 1 : 0;
   }
 
-  // Read Manual Charging (CH4 Field 2) - If it's 1 or 0, it's a command. If it's a float like 45.2, it's just battery data.
+  // Manual Charging (CH4 F2) — now pure command byte
   if (last.dronePct !== undefined && last.dronePct !== null) {
-    if (last.dronePct == 1 || last.dronePct == 0) {
-       document.getElementById('manualChargeToggle').checked = (last.dronePct == 1);
-       pendingCharge = last.dronePct == 1 ? 1 : 0;
-    } else {
-       // It's normal battery data, so keep the charge toggle off by default
-       document.getElementById('manualChargeToggle').checked = false;
-       pendingCharge = 0;
-    }
+    document.getElementById('manualChargeToggle').checked = (last.dronePct == 1);
+    pendingCharge = last.dronePct == 1 ? 1 : 0;
   }
 }
 
@@ -660,25 +650,22 @@ async function pushCommands() {
 
   btn.textContent = 'Sending...';
   btn.disabled = true;
-  btn.style.background = '#64748b'; 
+  btn.style.background = '#64748b';
 
   try {
-    // 1. Send to CH4 (Motor, Drone Switch, Surveillance, Manual Charge)
     let url4 = `https://api.thingspeak.com/update?api_key=${CH4.writeKey}`;
     url4 += `&field4=${pendingMotor}`;
     url4 += `&field5=${pendingSurv}`;
     url4 += `&field6=${pendingPower}`;
-    url4 += `&field2=${pendingCharge}`; // Using F2 for Manual Charge Command
-    
-    // 2. Send to CH2 (Deep Sleep)
+    url4 += `&field2=${pendingCharge}`;
+
     let url2 = `https://api.thingspeak.com/update?api_key=${CH2.writeKey}&field8=${pendingSleep}`;
 
     await Promise.all([fetch(url4), fetch(url2)]);
-    
-    // Start 15-second cooldown
+
     let timeLeft = 15;
     btn.textContent = `Wait ${timeLeft}s...`;
-    
+
     if (cooldownTimer) clearInterval(cooldownTimer);
     cooldownTimer = setInterval(() => {
       timeLeft--;
@@ -688,10 +675,10 @@ async function pushCommands() {
         clearInterval(cooldownTimer);
         btn.textContent = '🚀 Push Commands to Bot';
         btn.disabled = false;
-        btn.style.background = '#3b82f6'; 
+        btn.style.background = '#3b82f6';
       }
     }, 1000);
-    
+
   } catch (err) {
     console.error("Error sending commands:", err);
     alert("Failed to send commands. Please check network.");
@@ -715,13 +702,9 @@ function filterByRange(data, range) {
   const cutoff = latestTime - (hours * 3600 * 1000);
   const filtered = data.filter(r => r.t.getTime() >= cutoff);
 
-  // If the bot was offline and the window has very few points,
-  // extend backwards so the chart still shows a meaningful 24H of
-  // *active* data instead of a sparse handful of points.
   const minPoints = (range === '24H') ? 20
                   : (range === '7D')  ? 30
                   : 5;
-
   return filtered.length >= minPoints ? filtered : data.slice(-minPoints);
 }
 
@@ -797,7 +780,7 @@ function renderScrollableChart(canvas, wrapper, labels, datasets, yMin, yMax, ra
       },
       scales: {
         x: {
-          type: 'category', // <--- ADDED: This removes the time gaps for offline periods
+          type: 'category',
           ticks: { color: '#94a3b8', maxTicksLimit: Math.max(6, Math.min(20, Math.floor(labels.length / 5) || 6)), font: { size: 9 }, maxRotation: 45, autoSkip: true },
           grid: { display: false }
         },
@@ -869,7 +852,7 @@ function initGlobalRangeBar() {
       updateBatteryChart();
       updateSolarChart();
       updateDroneChart();
-      
+
       const activeTab = document.querySelector('.drone-tab-btn.active');
       if (activeTab && activeTab.dataset.view === 'charge') updateDroneChargeChart();
     };
@@ -902,7 +885,7 @@ async function fetchChannels() {
       `https://api.thingspeak.com/channels/${CH2.id}/feeds.json?api_key=${CH2.readKey}&results=${RESULTS}`,
       `https://api.thingspeak.com/channels/${CH3.id}/feeds.json?api_key=${CH3.readKey}&results=${RESULTS}`,
     ];
-    
+
     if (CH4.id && CH4.readKey) {
       urls.push(`https://api.thingspeak.com/channels/${CH4.id}/feeds.json?api_key=${CH4.readKey}&results=${RESULTS}`);
     }
@@ -948,26 +931,28 @@ async function fetchChannels() {
         sgpCO2: parseFloat(f.field7)||null, sgpTVOC: parseFloat(f.field8)||null };
     }).filter(r => !isNaN(r.t.getTime()));
 
+    // [v3] CH4 F2 = charge command (0/1); F7/F8 = ultrasonic in METERS
     const data4 = feeds4.map(f => {
       const t = new Date(f.created_at);
       return {
         t,
         droneV:      parseFloat(f.field1)||null,
-        dronePct:    parseFloat(f.field2)||null, // Could be % OR manual charge cmd
-        droneStatus: (f.field3 !== undefined && f.field3 !== null && f.field3 !== '') ? parseInt(f.field3) : null,
+        dronePct:    parseFloat(f.field2)||null,
+        droneStatus: (f.field3 !== undefined && f.field3 !== null && f.field3 !== '')
+                       ? parseInt(f.field3) : null,
         motorCmd:    f.field4 || null,
         surveillance:f.field5 || null,
-        dronePower:  f.field6 || null
+        dronePower:  f.field6 || null,
+        ultraLeft:   parseFloat(f.field7)||null,
+        ultraRight:  parseFloat(f.field8)||null
       };
     }).filter(r => !isNaN(r.t.getTime()));
 
     allMergedData = mergeN([data1, data2, data3, data4]);
-    
-    // Sync toggles with latest state on load
-    syncUIState();
 
+    syncUIState();
     renderAll();
-    
+
     if (allMergedData.length > 0) {
       const latestTime = allMergedData[allMergedData.length-1].t;
       document.getElementById('lastUpdatedDisplay').textContent = 'Last Update: ' + latestTime.toLocaleString();
@@ -975,10 +960,10 @@ async function fetchChannels() {
       document.getElementById('lastUpdatedDisplay').textContent = 'Last Update: No Data';
     }
 
-  } catch (err) { 
-    console.error(err); 
+  } catch (err) {
+    console.error(err);
     document.getElementById('lastUpdatedDisplay').textContent = 'Last Update: Error';
-    renderAll(); 
+    renderAll();
   }
 }
 
@@ -986,8 +971,6 @@ function mergeN(arrays) {
   const combined = [].concat(...arrays);
   combined.sort((x,y) => x.t.getTime() - y.t.getTime());
   const res = [];
-  // widened from 60 s → 5 min so sequential CH1–CH4 uploads (with 20 s
-  // ThingSpeak gaps + network latency) always merge into one row.
   const tol = 5 * 60 * 1000;
   for (const row of combined) {
     if (res.length === 0) { res.push({...row}); continue; }
@@ -1057,7 +1040,7 @@ function renderAll() {
     try { updatePhotoGallery(); } catch(e){ console.error(e); }
 
     window.dispatchEvent(new Event('resize'));
-  }, 300); 
+  }, 300);
 }
 
 // ============================================================
@@ -1075,7 +1058,7 @@ function getCHWarning(ch, type) {
 function applyChannelWarnings() {
   const warnManual = document.getElementById('warnManual');
   if (warnManual) warnManual.innerHTML = getCHWarning(4, 'write');
-  
+
   const warnUltrasonic = document.getElementById('warnUltrasonic');
   if (warnUltrasonic) warnUltrasonic.innerHTML = getCHWarning(4, 'read');
 
@@ -1089,7 +1072,7 @@ function applyChannelWarnings() {
 function updatePhotoGallery() {
   const grid = document.getElementById('photoGrid');
   if (!grid) return;
-  
+
   grid.innerHTML = `
     <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
     <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
@@ -1193,7 +1176,6 @@ function updateBatteryChart() {
   const canvas = document.getElementById('batteryLineChart');
   if (!wrapper || !canvas) return;
 
-  // FIX: spanGaps:true added so any remaining nulls do not render as gaps
   const datasets = [
     { label:'Voltage (V)', data: data.map(r => r.battV ?? null), borderColor:'#3b82f6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
     { label:'Current (A)', data: data.map(r => r.battA ?? null), borderColor:'#8b5cf6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
@@ -1268,7 +1250,6 @@ function updateSolarChart() {
   const canvas = document.getElementById('solarLineChart');
   if (!wrapper || !canvas) return;
 
-  // FIX: spanGaps:true added
   const datasets = [
     { label:'Voltage (V)', data: data.map(r => r.solarV ?? null), borderColor:'#f59e0b', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
     { label:'Current (A)', data: data.map(r => r.solarA ?? null), borderColor:'#f97316', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
@@ -1284,7 +1265,6 @@ function updateSolarChart() {
 // ============================================================
 function createDroneCard() {
   const card = document.createElement('div'); card.className = 'card';
-  const notConfigured = !(CH4.id && CH4.readKey);
   card.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:6px;">
       <div>
@@ -1297,7 +1277,7 @@ function createDroneCard() {
         <button class="tab-btn drone-tab-btn" data-view="charge">Charge</button>
       </div>
     </div>
-    
+
     <div id="droneGaugeContainer" class="gauge-container active">
       <div class="gauge-wrapper">
         <div class="gauge-canvas">
@@ -1347,6 +1327,7 @@ function createDroneGaugeAndTrend() {
   cardStates.drone.trend = createTrendChart(tCtx, '#a78bfa');
 }
 
+// [v3] SoC computed from voltage (F2 no longer carries %)
 function updateDroneChart() {
   const state = cardStates.drone;
   const data = filterByRange(allMergedData, state.range);
@@ -1357,10 +1338,11 @@ function updateDroneChart() {
   const canvas = document.getElementById('droneLineChart');
   if (!wrapper || !canvas) return;
 
-  // FIX: spanGaps:true added
   const datasets = [
-    { label:'Voltage (V)', data: data.map(r => r.droneV ?? null), borderColor:'#a78bfa', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
-    { label:'Battery (%)', data: data.map(r => r.dronePct ?? null), borderColor:'#14b8a6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
+    { label:'Voltage (V)', data: data.map(r => r.droneV ?? null),
+      borderColor:'#a78bfa', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
+    { label:'SoC (%)', data: data.map(r => r.droneV !== null && r.droneV !== undefined ? voltageToSOC(r.droneV) : null),
+      borderColor:'#14b8a6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
   ];
 
   if (state.chart) state.chart.destroy();
@@ -1398,7 +1380,7 @@ function updateDroneChargeChart() {
 
   if (state.chargeChart) state.chargeChart.destroy();
   const ctx = canvas.getContext('2d');
-  
+
   state.chargeChart = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -1569,10 +1551,10 @@ function updateGaugeValue(chart, percent) {
   const clamped = Math.min(100, Math.max(0, percent));
   const steps = chart.data.datasets[0].data.length;
   const filled = Math.round((clamped / 100) * steps);
-  
+
   const originalColors = chart.data.datasets[0].originalColors;
   const newColors = originalColors.map((c, i) => i < filled ? c : '#334155');
-  
+
   chart.data.datasets[0].backgroundColor = newColors;
   chart.update('none');
 }
@@ -1584,7 +1566,7 @@ function createTrendChart(ctx, color) {
 }
 
 // ============================================================
-//  MAP – FIORD STYLE, STATIC POSITION
+//  MAP
 // ============================================================
 let map = null, mapMarker = null, mapInitialized = false;
 
@@ -1604,7 +1586,7 @@ function setupMap() {
   }
 }
 
-function updateMap() { /* static – nothing to update */ }
+function updateMap() { /* static */ }
 
 // ============================================================
 //  UPDATE GAUGES + STATS + ULTRASONIC SCENE
@@ -1660,13 +1642,12 @@ function updateGaugesAndStats() {
     cardStates.solar.trend.update('none');
   }
 
-  // ---- Drone Battery (CH4) ----
+  // ---- Drone Battery (CH4) - [v3] SoC always from voltage ----
   const dV = last.droneV;
-  const dPct = last.dronePct;
   const dStat = last.droneStatus;
 
   if (dV !== null && dV !== undefined) {
-    const dSoc = (dPct !== null && dPct !== undefined && dPct > 1) ? dPct : voltageToSOC(dV);
+    const dSoc = voltageToSOC(dV);
     if ($('droneVoltageDisplay')) $('droneVoltageDisplay').textContent = dV.toFixed(2);
     if ($('droneSocDisplay'))     $('droneSocDisplay').textContent = Math.round(dSoc) + '% SoC';
     if ($('dronePctStat'))        $('dronePctStat').textContent = dSoc.toFixed(1);
@@ -1697,16 +1678,17 @@ function updateGaugesAndStats() {
     cardStates.drone.trend.update('none');
   }
 
-  // ---- Ultrasonic Scene ----
+  // ---- Ultrasonic Scene - [v3] values now in METERS ----
   const uL = last.ultraLeft;
   const uR = last.ultraRight;
-  
-  if (uL !== null && uR !== null && uL > 0 && uR > 0) {
-    if ($('distL')) $('distL').textContent = `L: ${(uL/100).toFixed(2)} m`;
-    if ($('distR')) $('distR').textContent = `R: ${(uR/100).toFixed(2)} m`;
-    
-    if ($('spaceL')) $('spaceL').style.flex = uL;
-    if ($('spaceR')) $('spaceR').style.flex = uR;
+
+  if (uL !== null && uL !== undefined && uR !== null && uR !== undefined && uL > 0 && uR > 0) {
+    if ($('distL')) $('distL').textContent = `L: ${uL.toFixed(2)} m`;
+    if ($('distR')) $('distR').textContent = `R: ${uR.toFixed(2)} m`;
+
+    // Scale meters to a flex-friendly number so both spaces stay visible
+    if ($('spaceL')) $('spaceL').style.flex = Math.max(uL * 100, 10);
+    if ($('spaceR')) $('spaceR').style.flex = Math.max(uR * 100, 10);
   } else {
     if ($('distL')) $('distL').textContent = 'L: -- m';
     if ($('distR')) $('distR').textContent = 'R: -- m';
@@ -1749,7 +1731,7 @@ function updateDateTime() {
 }
 
 // ============================================================
-//  TOGGLES (Battery / Solar / Drone Tabs)
+//  TOGGLES
 // ============================================================
 function setupToggles() {
   const bBtn = document.getElementById('batteryToggleBtn');
@@ -1782,7 +1764,7 @@ function setupDroneTabs() {
       btns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       const view = btn.dataset.view;
-      
+
       document.getElementById('droneGaugeContainer').classList.remove('active');
       document.getElementById('droneChartContainer').classList.remove('active');
       document.getElementById('droneChargeContainer').classList.remove('active');
@@ -1801,21 +1783,23 @@ function setupDroneTabs() {
 }
 
 // ============================================================
-//  EXPORT CSV
+//  EXPORT CSV  [v3] — added droneSoC, dropped raw dronePct
 // ============================================================
 document.getElementById('exportBtn').addEventListener('click', () => {
   if (allMergedData.length === 0) return alert('No data');
   const keys = ['shtTemp','shtHum','bmeTemp','bmeHum','bmePress','bmeGas',
                 'ccsCO2','ccsTVOC','sgpCO2','sgpTVOC',
                 'solarV','solarA','solarW','battV','battA','battW','sleepSec',
-                'droneV','dronePct','droneStatus','ultraLeft','ultraRight',
+                'droneV','droneStatus','ultraLeft','ultraRight',
                 'lux','accX','accY','accZ','gpsLat','gpsLon'];
-  const header = 'timestamp,' + keys.join(',') + ',battSoC';
+  const header = 'timestamp,' + keys.join(',') + ',battSoC,droneSoC,chargeCmd';
   const rows = allMergedData.map(r => {
     const ts = r.t.toISOString();
     const vals = keys.map(k => r[k] ?? '').join(',');
-    const battSoc = voltageToSOC(r.battV ?? 0).toFixed(1);
-    return ts + ',' + vals + ',' + battSoc;
+    const battSoc  = voltageToSOC(r.battV ?? 0).toFixed(1);
+    const droneSoc = r.droneV ? voltageToSOC(r.droneV).toFixed(1) : '';
+    const chargeCmd = (r.dronePct === 1) ? 1 : 0;
+    return ts + ',' + vals + ',' + battSoc + ',' + droneSoc + ',' + chargeCmd;
   });
   const csv = [header, ...rows].join('\n');
   const blob = new Blob([csv], { type:'text/csv' });
@@ -1845,7 +1829,7 @@ window.addEventListener('resize', () => {
     ['temperature','humidity','pressure','gas','eco2','tvoc','acc','light','sleep'].forEach(updateCardChart);
     if (isBatteryChart) updateBatteryChart();
     if (isSolarChart) updateSolarChart();
-    
+
     const activeTab = document.querySelector('.drone-tab-btn.active');
     if (activeTab && activeTab.dataset.view === 'trend') updateDroneChart();
     if (activeTab && activeTab.dataset.view === 'charge') updateDroneChargeChart();
