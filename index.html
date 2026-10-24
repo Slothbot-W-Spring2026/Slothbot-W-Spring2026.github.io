@@ -23,7 +23,6 @@
   }
   .container{max-width:100%; margin:0 auto; width:100%;}
 
-  /* ---- Header ---- */
   .header-container {
     display: flex; justify-content: space-between; align-items: center;
     flex-wrap: wrap; gap: 12px; margin-bottom: 12px;
@@ -54,7 +53,6 @@
   }
   .btn:hover{background:#334155; color:#fff;}
 
-  /* ---- Global Range Bar ---- */
   .global-range-bar {
     display: flex; align-items: center; gap: 14px;
     padding: 10px 20px; background: #131c2e;
@@ -84,7 +82,6 @@
     box-shadow: 0 0 14px rgba(59, 130, 246, 0.6);
   }
 
-  /* ---- Grids ---- */
   .grid{
     display:grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
@@ -119,7 +116,6 @@
   .card .sub{ font-size:11px; color:#94a3b8; margin-bottom:8px; line-height:1.4; }
   .full-width{grid-column:1/-1;}
 
-  /* ---- Warnings ---- */
   .ch-warn {
     background: rgba(239, 68, 68, 0.15);
     color: #ef4444;
@@ -131,7 +127,6 @@
     letter-spacing: 0.5px;
   }
 
-  /* ---- Per-card range selector ---- */
   .range-selector { display: flex; gap: 4px; flex-wrap: wrap; margin: 6px 0 10px 0; }
   .range-selector .range-btn {
     background: #0b1120; color: #64748b; border: 1px solid #2d3a4f;
@@ -145,7 +140,6 @@
     box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
   }
 
-  /* ---- Scrollable chart wrapper ---- */
   .chart-scroll {
     position: relative; width: 100%; overflow-x: auto; overflow-y: hidden;
     border-radius: 8px; scrollbar-width: thin; scrollbar-color: #475569 #0b1120;
@@ -163,7 +157,6 @@
   .combined-charts .chart-half { flex: 1 1 240px; min-width: 0; max-width: 100%; }
   .combined-charts .chart-half .chart-inner { height: 220px; }
 
-  /* ---- Gauge styles ---- */
   .gauge-wrapper { display: flex; flex-direction: column; align-items: center; gap: 6px; flex:1; }
   .gauge-canvas {
     position: relative; width: 150px; height: 150px; flex-shrink:0;
@@ -182,7 +175,6 @@
   }
   .gauge-stats .stat strong { color:#f1f5f9; font-weight:500; }
 
-  /* Toggle & Tab Buttons */
   .toggle-btn {
     background:#334155; border:none; color:#f1f5f9; padding:4px 14px;
     border-radius:20px; cursor:pointer; font-size:11px; margin-top:4px; align-self:flex-end;
@@ -210,7 +202,6 @@
   .trend-chart { height:70px; margin-top:6px; }
   .trend-container { margin-top:8px; }
 
-  /* ---- Charging status badge ---- */
   .charge-badge {
     display:inline-flex; align-items:center; gap:6px;
     padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600;
@@ -221,13 +212,8 @@
   .charge-badge.idle .dot { background:#94a3b8; }
   .charge-badge.charging { background:rgba(74,222,128,0.15); color:#4ade80; border:1px solid rgba(74,222,128,0.4); }
   .charge-badge.charging .dot { background:#4ade80; box-shadow:0 0 8px #4ade80; animation: pulse 1.2s infinite; }
-  .charge-badge.full   { background:rgba(59,130,246,0.15); color:#60a5fa; border:1px solid rgba(59,130,246,0.4); }
-  .charge-badge.full .dot { background:#60a5fa; }
-  .charge-badge.error  { background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.4); }
-  .charge-badge.error .dot { background:#ef4444; }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-  /* ---- Dynamic Ultrasonic Orientation Scene ---- */
   .ultrasonic-scene {
     display: flex; align-items: center; justify-content: space-between;
     width: 100%; min-height: 120px; max-height: 180px;
@@ -259,12 +245,10 @@
     background: #0b1120; object-fit: cover;
   }
 
-  /* ---- Map ---- */
   .map-container{height:320px; border-radius:8px; overflow:hidden; background:#0b1120; margin-top:4px;}
   .gps-stats{display:flex; gap:18px; flex-wrap:wrap; margin-top:10px; font-size:13px; color:#94a3b8;}
   .gps-stats strong{color:#f1f5f9;}
 
-  /* ---- Dark-themed Leaflet Attribution ---- */
   .leaflet-control-attribution {
     background: rgba(15, 23, 42, 0.85) !important;
     color: #94a3b8 !important;
@@ -273,7 +257,6 @@
   .leaflet-control-attribution a { color: #60a5fa !important; text-decoration: none; }
   .leaflet-control-attribution a:hover { text-decoration: underline; }
 
-  /* ---- Manual Control Panel ---- */
   .control-panel {
     display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;
     background: #0f172a; border-radius: 8px; padding: 16px; border: 1px solid #2d3a4f;
@@ -289,8 +272,8 @@
   }
   .ctrl-btn:hover { background: #334155; }
   .ctrl-btn.active { background: #3b82f6; border-color: #3b82f6; box-shadow: 0 0 10px rgba(59,130,246,0.4); }
+  .ctrl-btn.disabled { opacity: 0.4; cursor: not-allowed; }
 
-  /* Toggle Switch Container */
   .toggle-container {
     display: flex; align-items: center; gap: 10px; margin-top: 5px;
     background: #1e293b; padding: 8px 12px; border-radius: 8px; border: 1px solid #334155;
@@ -312,7 +295,6 @@
   input:checked + .slider { background-color: #22c55e; }
   input:checked + .slider:before { transform: translateX(24px); }
 
-  /* ---- Photo Gallery ---- */
   .photo-grid {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 16px; margin-top: 10px;
@@ -323,16 +305,23 @@
     display: flex; align-items: center; justify-content: center;
     color: #475569; font-size: 12px; flex-direction: column; gap: 8px;
   }
-  .photo-item img {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-  }
+  .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #1e293b; color: #f1f5f9; padding: 10px 22px;
+    border-radius: 24px; border: 1px solid #3b82f6; z-index: 9999;
+    font-size: 13px; font-weight: 500; pointer-events: none;
+    opacity: 0; transition: opacity 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    max-width: 90%;
+  }
+  #toast.show { opacity: 1; }
 </style>
 </head>
 <body>
 <div class="container">
 
-  <!-- Header -->
   <div class="header-container">
     <div class="brand">
       <div class="logo"><img src="LOGO_no_UW_V1.png" alt="SlothBot Logo" /></div>
@@ -347,19 +336,14 @@
     </div>
   </div>
 
-  <!-- GLOBAL RANGE BAR -->
   <div class="global-range-bar">
     <span class="global-label">Range for all sensors</span>
     <div class="range-selector" data-card="__global__"></div>
   </div>
 
-  <!-- POWER TILES -->
   <div class="grid-3-power" id="gaugeRow"></div>
-
-  <!-- Environmental charts -->
   <div class="grid" id="envGrid"></div>
 
-  <!-- Motion + Orientation + Sleep -->
   <div class="grid-4">
     <div class="card span-2">
       <h3>📊 Motion &amp; Light</h3>
@@ -382,7 +366,6 @@
       </div>
     </div>
 
-    <!-- Ultrasonic Orientation -->
     <div class="card">
       <h3>🦥 Sensor Orientation <span id="warnUltrasonic"></span></h3>
       <div class="sub">Ultrasonic Distance (Left &amp; Right, meters)</div>
@@ -411,23 +394,20 @@
     </div>
   </div>
 
-  <!-- MANUAL CONTROL & COMMANDS -->
   <div class="card full-width" style="margin-top:20px;">
     <h3>🎮 Manual Control &amp; Commands <span id="warnManual"></span></h3>
-    <div class="sub">Toggle settings locally, then push to ThingSpeak to avoid rate limits.</div>
+    <div class="sub">Commands push immediately when Manual Mode is active.</div>
 
     <div id="controlUnlocked" class="control-panel">
-
-      <!-- Manual Mode Toggle -->
       <div class="control-section">
-        <h4>Deep Sleep Mode</h4>
+        <h4>Manual Mode (Deep Sleep)</h4>
         <div class="toggle-container">
-          <span class="toggle-label">OFF</span>
+          <span class="toggle-label">SLEEP</span>
           <label class="switch">
-            <input type="checkbox" id="manualModeToggle" onchange="updateLocalState()">
+            <input type="checkbox" id="manualModeToggle" onchange="onToggleChange('manualModeToggle')">
             <span class="slider"></span>
           </label>
-          <span class="toggle-label">ON</span>
+          <span class="toggle-label">MANUAL</span>
         </div>
         <div style="font-size:10px; color:#64748b; margin-top:5px;">ON = Disable Deep Sleep</div>
       </div>
@@ -435,9 +415,9 @@
       <div class="control-section">
         <h4>Motor Control</h4>
         <div class="btn-group">
-          <button class="ctrl-btn motor-btn" id="btnForward" onclick="setMotorState('F')">⬆ Forward</button>
-          <button class="ctrl-btn motor-btn" id="btnStop" onclick="setMotorState('S')">⏹ Stop</button>
-          <button class="ctrl-btn motor-btn" id="btnBackward" onclick="setMotorState('B')">⬇ Backward</button>
+          <button class="ctrl-btn motor-btn" id="btnForward" onclick="setMotorState(5)">⬆ Forward</button>
+          <button class="ctrl-btn motor-btn" id="btnStop" onclick="setMotorState(7)">⏹ Stop</button>
+          <button class="ctrl-btn motor-btn" id="btnBackward" onclick="setMotorState(9)">⬇ Backward</button>
         </div>
       </div>
 
@@ -446,27 +426,27 @@
         <div class="toggle-container">
           <span class="toggle-label">OFF</span>
           <label class="switch">
-            <input type="checkbox" id="dronePowerToggle" onchange="updateLocalState()">
+            <input type="checkbox" id="dronePowerToggle" onchange="onToggleChange('dronePowerToggle')">
             <span class="slider"></span>
           </label>
           <span class="toggle-label">ON</span>
         </div>
-        <div style="font-size:10px; color:#64748b; margin-top:5px;">Drone Switch ON_OFF Hall Effect</div>
+        <div style="font-size:10px; color:#64748b; margin-top:5px;">Drone Power Relay</div>
 
         <div class="toggle-container" style="margin-top:8px;">
           <span class="toggle-label">OFF</span>
           <label class="switch">
-            <input type="checkbox" id="surveillanceToggle" onchange="updateLocalState()">
+            <input type="checkbox" id="surveillanceToggle" onchange="onToggleChange('surveillanceToggle')">
             <span class="slider"></span>
           </label>
           <span class="toggle-label">ON</span>
         </div>
-        <div style="font-size:10px; color:#64748b; margin-top:5px;">📸 Perform Surveillance</div>
+        <div style="font-size:10px; color:#64748b; margin-top:5px;">📸 Surveillance</div>
 
         <div class="toggle-container" style="margin-top:8px;">
           <span class="toggle-label">OFF</span>
           <label class="switch">
-            <input type="checkbox" id="manualChargeToggle" onchange="updateLocalState()">
+            <input type="checkbox" id="manualChargeToggle" onchange="onToggleChange('manualChargeToggle')">
             <span class="slider"></span>
           </label>
           <span class="toggle-label">ON</span>
@@ -474,18 +454,15 @@
         <div style="font-size:10px; color:#64748b; margin-top:5px;">🔋 Manual Charging</div>
       </div>
 
-      <!-- PUSH BUTTON -->
       <div style="width: 100%; margin-top: 15px; display: flex; justify-content: flex-end;">
-        <button class="btn" id="pushCommandsBtn" onclick="pushCommands()" style="background:#3b82f6; color:#fff; font-weight:bold; transition:0.3s; min-width: 200px;">🚀 Push Commands to Bot</button>
+        <button class="btn" id="pushCommandsBtn" onclick="pushCommands()" style="background:#64748b; color:#fff; font-weight:bold; transition:0.3s; min-width: 200px; font-size:11px;">🔄 Force Sync All (fallback)</button>
       </div>
-
     </div>
   </div>
 
-  <!-- Map -->
   <div class="card full-width" style="margin-top:20px;">
     <h3>🌍 GPS Tracking</h3>
-    <div class="sub">Static Position · Free Dark Colorful Map (Waymorphic · Fiord)</div>
+    <div class="sub">Static Position · Waymorphic · Fiord</div>
     <div class="map-container" id="map"></div>
     <div class="gps-stats">
       <span>Lat <strong id="gpsLat">43.47043572</strong></span>
@@ -493,7 +470,6 @@
     </div>
   </div>
 
-  <!-- DRONE PHOTOS -->
   <div class="card full-width" style="margin-top:20px;">
     <h3>📸 Drone Surveillance Photos <span id="warnPhotos"></span></h3>
     <div class="sub">Images captured during surveillance missions</div>
@@ -506,10 +482,9 @@
   </div>
 </div>
 
+<div id="toast"></div>
+
 <script>
-// ============================================================
-//  CONFIG
-// ============================================================
 const CH1 = { id: 3426952, readKey: 'A2HC4A7NNG3LNGCH' };
 const CH2 = { id: 3434632, readKey: 'BRP7DG2R4FAUJJIW', writeKey: '8MCWI2C98A14LO77' };
 const CH3 = { id: 3434636, readKey: 'OZYLA7Y63DSQALXT' };
@@ -520,85 +495,43 @@ const STATIC_LAT = 43.47043572;
 const STATIC_LON = -80.54280196;
 const STATIC_ZOOM = 15;
 
-// ============================================================
-//  METRIC GROUPS
-// ============================================================
 const GROUPS = [
-  { key: 'temperature', name: 'Temperature', unit: '°C', datasets: [
-      { key: 'shtTemp', label: 'SHT31', color: '#4ade80' },
-      { key: 'bmeTemp', label: 'BME680', color: '#fb923c' },
-    ] },
-  { key: 'humidity', name: 'Humidity', unit: '%', datasets: [
-      { key: 'shtHum', label: 'SHT31', color: '#60a5fa' },
-      { key: 'bmeHum', label: 'BME680', color: '#f472b6' },
-    ] },
-  { key: 'pressure', name: 'Pressure', unit: 'hPa', datasets: [
-      { key: 'bmePress', label: 'BME680', color: '#a78bfa' },
-    ] },
-  { key: 'gas', name: 'Gas Resistance', unit: 'kΩ', datasets: [
-      { key: 'bmeGas', label: 'BME680', color: '#22d3ee' },
-    ] },
-  { key: 'eco2', name: 'eCO₂', unit: 'ppm', datasets: [
-      { key: 'ccsCO2', label: 'CCS811', color: '#f87171' },
-      { key: 'sgpCO2', label: 'SGP30', color: '#fde047' },
-    ] },
-  { key: 'tvoc', name: 'TVOC', unit: 'ppb', datasets: [
-      { key: 'ccsTVOC', label: 'CCS811', color: '#facc15' },
-      { key: 'sgpTVOC', label: 'SGP30', color: '#22d3ee' },
-    ] }
+  { key: 'temperature', name: 'Temperature', unit: '°C', datasets: [{ key: 'shtTemp', label: 'SHT31', color: '#4ade80' }, { key: 'bmeTemp', label: 'BME680', color: '#fb923c' }] },
+  { key: 'humidity', name: 'Humidity', unit: '%', datasets: [{ key: 'shtHum', label: 'SHT31', color: '#60a5fa' }, { key: 'bmeHum', label: 'BME680', color: '#f472b6' }] },
+  { key: 'pressure', name: 'Pressure', unit: 'hPa', datasets: [{ key: 'bmePress', label: 'BME680', color: '#a78bfa' }] },
+  { key: 'gas', name: 'Gas Resistance', unit: 'kΩ', datasets: [{ key: 'bmeGas', label: 'BME680', color: '#22d3ee' }] },
+  { key: 'eco2', name: 'eCO₂', unit: 'ppm', datasets: [{ key: 'ccsCO2', label: 'CCS811', color: '#f87171' }, { key: 'sgpCO2', label: 'SGP30', color: '#fde047' }] },
+  { key: 'tvoc', name: 'TVOC', unit: 'ppb', datasets: [{ key: 'ccsTVOC', label: 'CCS811', color: '#facc15' }, { key: 'sgpTVOC', label: 'SGP30', color: '#22d3ee' }] }
 ];
 
 const RANGE_LABELS = { '24H': '24H', '7D': '7D', '1M': '1M', '6M': '6M', '1Y': '1Y', 'ALL': 'All' };
 const RANGES = ['24H', '7D', '1M', '6M', '1Y', 'ALL'];
 const RANGE_HOURS = { '24H': 24, '7D': 24*7, '1M': 24*30, '6M': 24*180, '1Y': 24*365, 'ALL': Infinity };
 
-const CHARGE_STATUS = {
-  0: { label: 'Idle',     cls: 'idle' },
-  1: { label: 'Charging', cls: 'charging' },
-  2: { label: 'Full',     cls: 'full' },
-  3: { label: 'Error',    cls: 'error' }
-};
-
-// ============================================================
-//  STATE
-// ============================================================
 let allMergedData = [];
 let globalRange = '24H';
 
+let commandState = { manualMode: 0, chargeCmd: 0, droneStatus: 0, motorCmd: 7, surveillance: 0, dronePower: 0 };
+let latestData = {};
+
 const cardStates = {
-  temperature: { range: '24H', chart: null },
-  humidity:    { range: '24H', chart: null },
-  pressure:    { range: '24H', chart: null },
-  gas:         { range: '24H', chart: null },
-  eco2:        { range: '24H', chart: null },
-  tvoc:        { range: '24H', chart: null },
-  battery:     { range: '24H', chart: null, gauge: null, trend: null },
-  solar:       { range: '24H', chart: null, gauge: null, trend: null },
-  drone:       { range: '24H', chart: null, gauge: null, trend: null, chargeChart: null },
-  acc:         { range: '24H', chart: null },
-  light:       { range: '24H', chart: null },
-  sleep:       { range: '24H', chart: null },
+  temperature: { range: '24H', chart: null }, humidity: { range: '24H', chart: null }, pressure: { range: '24H', chart: null },
+  gas: { range: '24H', chart: null }, eco2: { range: '24H', chart: null }, tvoc: { range: '24H', chart: null },
+  battery: { range: '24H', chart: null, gauge: null, trend: null }, solar: { range: '24H', chart: null, gauge: null, trend: null },
+  drone: { range: '24H', chart: null, gauge: null, trend: null }, acc: { range: '24H', chart: null }, light: { range: '24H', chart: null }, sleep: { range: '24H', chart: null }
 };
 
-let isBatteryChart = false;
-let isSolarChart = false;
+let isBatteryChart = false, isSolarChart = false;
+let pendingMotor = 7, pendingSleep = 0, pendingSurv = 0, pendingPower = 0, pendingCharge = 0;
+let cooldownTimer = null, motorPushTimer = null;
 
-let pendingMotor = 'S';
-let pendingSleep = 0;
-let pendingSurv = 0;
-let pendingPower = 0;
-let pendingCharge = 0;
-let cooldownTimer = null;
-
-// ============================================================
-//  LOCAL STATE MANAGEMENT
-// ============================================================
-function setMotorState(cmd) {
-  pendingMotor = cmd;
-  document.querySelectorAll('.motor-btn').forEach(b => b.classList.remove('active'));
-  if (cmd === 'F') document.getElementById('btnForward').classList.add('active');
-  if (cmd === 'B') document.getElementById('btnBackward').classList.add('active');
-  if (cmd === 'S') document.getElementById('btnStop').classList.add('active');
+let toastTimer = null;
+function showToast(msg, isError) {
+  const el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = msg; el.style.borderColor = isError ? '#ef4444' : '#3b82f6';
+  el.classList.add('show'); if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
 }
 
 function updateLocalState() {
@@ -608,104 +541,108 @@ function updateLocalState() {
   pendingCharge = document.getElementById('manualChargeToggle').checked ? 1 : 0;
 }
 
-// [v3] Simplified — CH4 F2 is now 0/1 command only, so no heuristic needed
-function syncUIState() {
-  if (allMergedData.length === 0) return;
-  const last = allMergedData[allMergedData.length-1];
+function syncManualModeUI() {
+  const isManual = commandState.manualMode === 1;
+  document.querySelectorAll('.motor-btn').forEach(b => { b.classList.toggle('disabled', !isManual); b.disabled = !isManual; });
+  document.getElementById('dronePowerToggle').disabled = !isManual;
+  document.getElementById('surveillanceToggle').disabled = !isManual;
+  document.getElementById('manualChargeToggle').disabled = !isManual;
+}
 
-  // Manual Mode (CH2 F8)
-  if (last.manualMode !== undefined && last.manualMode !== null) {
-    document.getElementById('manualModeToggle').checked = (last.manualMode == 1);
-    pendingSleep = last.manualMode == 1 ? 1 : 0;
-  }
+async function pushSingleField(writeKey, fieldNum, value) {
+  const url = `https://api.thingspeak.com/update?api_key=${writeKey}&field${fieldNum}=${encodeURIComponent(value)}`;
+  try { const res = await fetch(url); return res.ok; } catch (e) { return false; }
+}
 
-  // Motor (CH4 F4)
-  if (last.motorCmd) {
-    const cmd = last.motorCmd.trim().toUpperCase();
-    if (cmd === 'F' || cmd === 'B' || cmd === 'S') setMotorState(cmd);
-  }
+function setMotorState(cmd, fromSync = false) {
+  pendingMotor = cmd;
+  document.querySelectorAll('.motor-btn').forEach(b => b.classList.remove('active'));
+  let id = 'btnStop';
+  if (cmd === 5) id = 'btnForward';
+  if (cmd === 9) id = 'btnBackward';
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+  if (fromSync) return;
 
-  // Surveillance (CH4 F5)
-  if (last.surveillance !== undefined && last.surveillance !== null) {
-    document.getElementById('surveillanceToggle').checked = (last.surveillance == 1);
-    pendingSurv = last.surveillance == 1 ? 1 : 0;
-  }
+  if (commandState.manualMode !== 1) { showToast('Enable Manual Mode first.', true); return; }
+  if (motorPushTimer) clearTimeout(motorPushTimer);
+  motorPushTimer = setTimeout(async () => {
+    motorPushTimer = null;
+    const ok = await pushSingleField(CH4.writeKey, 4, pendingMotor);
+    if (ok) {
+      const action = cmd === 5 ? 'Forward' : cmd === 9 ? 'Backward' : 'Stop';
+      showToast(`Motor → ${action}`);
+    } else {
+      showToast('Push failed (rate limit?)', true);
+    }
+  }, 800);
+}
 
-  // Drone Power (CH4 F6)
-  if (last.dronePower !== undefined && last.dronePower !== null) {
-    document.getElementById('dronePowerToggle').checked = (last.dronePower == 1);
-    pendingPower = last.dronePower == 1 ? 1 : 0;
+async function onToggleChange(toggleId) {
+  updateLocalState();
+  if (toggleId === 'manualModeToggle') {
+    const ok = await pushSingleField(CH2.writeKey, 8, pendingSleep);
+    commandState.manualMode = pendingSleep;
+    syncManualModeUI();
+    showToast(pendingSleep ? 'Manual Mode ON' : 'Manual Mode OFF');
+    return;
   }
-
-  // Manual Charging (CH4 F2) — now pure command byte
-  if (last.dronePct !== undefined && last.dronePct !== null) {
-    document.getElementById('manualChargeToggle').checked = (last.dronePct == 1);
-    pendingCharge = last.dronePct == 1 ? 1 : 0;
+  if (commandState.manualMode !== 1) {
+    showToast('Enable Manual Mode first.', true);
+    document.getElementById(toggleId).checked = !document.getElementById(toggleId).checked;
+    updateLocalState(); return;
   }
+  const map = { 'dronePowerToggle': [CH4.writeKey, 6, pendingPower], 'surveillanceToggle': [CH4.writeKey, 5, pendingSurv], 'manualChargeToggle': [CH4.writeKey, 2, pendingCharge] };
+  const [key, field, val] = map[toggleId];
+  const ok = await pushSingleField(key, field, val);
+  if (ok) showToast(`${toggleId.replace('Toggle','')} → ${val ? 'ON' : 'OFF'}`);
+  else showToast('Push failed.', true);
 }
 
 async function pushCommands() {
   const btn = document.getElementById('pushCommandsBtn');
-  if (btn.disabled) return;
-
-  btn.textContent = 'Sending...';
-  btn.disabled = true;
-  btn.style.background = '#64748b';
-
+  if (btn.disabled) return; btn.textContent = 'Sending...'; btn.disabled = true;
   try {
-    let url4 = `https://api.thingspeak.com/update?api_key=${CH4.writeKey}`;
-    url4 += `&field4=${pendingMotor}`;
-    url4 += `&field5=${pendingSurv}`;
-    url4 += `&field6=${pendingPower}`;
-    url4 += `&field2=${pendingCharge}`;
-
-    let url2 = `https://api.thingspeak.com/update?api_key=${CH2.writeKey}&field8=${pendingSleep}`;
-
+    const fields4 = [];
+    if (pendingSleep === 1) { fields4.push(`field4=${pendingMotor}`, `field5=${pendingSurv}`, `field6=${pendingPower}`, `field2=${pendingCharge}`); }
+    else { fields4.push(`field4=7`, `field5=0`, `field6=0`, `field2=0`); }
+    const url4 = `https://api.thingspeak.com/update?api_key=${CH4.writeKey}&` + fields4.join('&');
+    const url2 = `https://api.thingspeak.com/update?api_key=${CH2.writeKey}&field8=${pendingSleep}`;
     await Promise.all([fetch(url4), fetch(url2)]);
-
-    let timeLeft = 15;
-    btn.textContent = `Wait ${timeLeft}s...`;
-
+    showToast('All commands synced');
+    let t = 15; btn.textContent = `Wait ${t}s...`;
     if (cooldownTimer) clearInterval(cooldownTimer);
     cooldownTimer = setInterval(() => {
-      timeLeft--;
-      if (timeLeft > 0) {
-        btn.textContent = `Wait ${timeLeft}s...`;
-      } else {
-        clearInterval(cooldownTimer);
-        btn.textContent = '🚀 Push Commands to Bot';
-        btn.disabled = false;
-        btn.style.background = '#3b82f6';
-      }
+      t--; if (t > 0) btn.textContent = `Wait ${t}s...`;
+      else { clearInterval(cooldownTimer); btn.textContent = '🔄 Force Sync All (fallback)'; btn.disabled = false; }
     }, 1000);
-
-  } catch (err) {
-    console.error("Error sending commands:", err);
-    alert("Failed to send commands. Please check network.");
-    btn.textContent = '🚀 Push Commands to Bot';
-    btn.disabled = false;
-    btn.style.background = '#3b82f6';
-  }
+  } catch (err) { showToast('Sync failed', true); btn.textContent = '🔄 Force Sync All (fallback)'; btn.disabled = false; }
 }
 
-// ============================================================
-//  HELPERS
-// ============================================================
+function syncUIState() {
+  document.getElementById('manualModeToggle').checked  = commandState.manualMode === 1;
+  document.getElementById('surveillanceToggle').checked = commandState.surveillance === 1;
+  document.getElementById('dronePowerToggle').checked   = commandState.dronePower === 1;
+  document.getElementById('manualChargeToggle').checked = commandState.chargeCmd === 1;
+  pendingSleep = commandState.manualMode === 1 ? 1 : 0; pendingSurv = commandState.surveillance === 1 ? 1 : 0;
+  pendingPower = commandState.dronePower === 1 ? 1 : 0; pendingCharge = commandState.chargeCmd === 1 ? 1 : 0;
+  
+  // Motor sync logic
+  if (commandState.motorCmd) {
+    if (commandState.motorCmd === 5 || commandState.motorCmd === 7 || commandState.motorCmd === 9) {
+      setMotorState(commandState.motorCmd, true);
+    }
+  }
+  
+  syncManualModeUI();
+}
+
 function filterByRange(data, range) {
   if (!data || data.length === 0) return [];
   if (range === 'ALL') return data;
-
-  const hours = RANGE_HOURS[range];
-  const latestTime = data[data.length - 1].t.getTime();
-  if (isNaN(latestTime)) return data;
-
-  const cutoff = latestTime - (hours * 3600 * 1000);
+  const cutoff = data[data.length - 1].t.getTime() - (RANGE_HOURS[range] * 3600 * 1000);
   const filtered = data.filter(r => r.t.getTime() >= cutoff);
-
-  const minPoints = (range === '24H') ? 20
-                  : (range === '7D')  ? 30
-                  : 5;
-  return filtered.length >= minPoints ? filtered : data.slice(-minPoints);
+  return filtered.length >= 20 ? filtered : data.slice(-20);
 }
 
 function formatXLabel(date, range) {
@@ -714,889 +651,266 @@ function formatXLabel(date, range) {
   if (range === '7D')  return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   if (range === '1M')  return d.toLocaleString('en-US', { month: 'short', day: 'numeric' });
   if (range === '6M')  return d.toLocaleString('en-US', { month: 'short', day: 'numeric' });
-  if (range === '1Y' || range === 'ALL') return d.toLocaleString('en-US', { month: 'short', year: '2-digit' });
-  return d.toLocaleString();
+  return d.toLocaleString('en-US', { month: 'short', year: '2-digit' });
 }
-
-function formatFullTimestamp(date) {
-  const d = new Date(date);
-  return d.toLocaleString('en-US', {
-    weekday: 'short', year: 'numeric', month: 'short', day: 'numeric',
-    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
-  });
-}
-
-function computeChartWidth(numPoints, containerWidth) {
-  const perPoint = 14;
-  const minW = Math.max(containerWidth || 400, 400);
-  const maxW = 1800;
-  return Math.min(maxW, Math.max(minW, numPoints * perPoint));
-}
+function formatFullTimestamp(date) { return new Date(date).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }); }
+function computeChartWidth(numPoints, containerWidth) { return Math.min(1800, Math.max(Math.max(containerWidth || 400, 400), numPoints * 14)); }
 
 function renderScrollableChart(canvas, wrapper, labels, datasets, yMin, yMax, rawDates) {
-  const containerW = wrapper.parentElement ? wrapper.parentElement.clientWidth : 400;
-  const width  = computeChartWidth(labels.length, containerW);
-  const height = wrapper.clientHeight || 240;
-
-  wrapper.style.width  = width + 'px';
-  wrapper.style.height = height + 'px';
-
-  const ctx = canvas.getContext('2d');
+  wrapper.style.width = computeChartWidth(labels.length, wrapper.parentElement.clientWidth) + 'px';
+  wrapper.style.height = (wrapper.clientHeight || 240) + 'px';
   const yOpts = { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 9 } } };
-  if (yMin !== undefined) yOpts.suggestedMin = yMin;
-  if (yMax !== undefined) yOpts.suggestedMax = yMax;
-
-  const chart = new Chart(ctx, {
-    type: 'line',
-    data: { labels, datasets },
-    options: {
-      responsive: true, maintainAspectRatio: false, animation: false,
-      interaction: { mode: 'index', intersect: false, axis: 'x' },
-      plugins: {
-        legend: { labels: { color: '#94a3b8', font: { size: 10 }, boxWidth: 12, padding: 6 } },
-        tooltip: {
-          enabled: true, mode: 'index', intersect: false,
-          backgroundColor: 'rgba(15, 23, 42, 0.95)',
-          titleColor: '#f1f5f9', bodyColor: '#e2e8f0',
-          borderColor: '#334155', borderWidth: 1,
-          padding: 10, cornerRadius: 6,
-          displayColors: true, boxWidth: 8, boxHeight: 8, boxPadding: 4,
-          titleFont: { size: 11, weight: '600' }, bodyFont: { size: 11 },
-          callbacks: {
-            title: function(items) {
-              if (!items.length) return '';
-              const idx = items[0].dataIndex;
-              if (rawDates && rawDates[idx]) return formatFullTimestamp(rawDates[idx]);
-              return items[0].label || '';
-            },
-            label: function(ctx) {
-              const v = ctx.parsed.y;
-              if (v === null || v === undefined || isNaN(v)) return null;
-              const lbl = ctx.dataset.label || '';
-              return `${lbl}: ${Number(v).toFixed(2)}`;
-            }
-          }
-        }
-      },
-      scales: {
-        x: {
-          type: 'category',
-          ticks: { color: '#94a3b8', maxTicksLimit: Math.max(6, Math.min(20, Math.floor(labels.length / 5) || 6)), font: { size: 9 }, maxRotation: 45, autoSkip: true },
-          grid: { display: false }
-        },
-        y: yOpts
-      }
-    }
+  if (yMin !== undefined) yOpts.suggestedMin = yMin; if (yMax !== undefined) yOpts.suggestedMax = yMax;
+  const chart = new Chart(canvas.getContext('2d'), {
+    type: 'line', data: { labels, datasets },
+    options: { responsive: true, maintainAspectRatio: false, animation: false, interaction: { mode: 'index', intersect: false, axis: 'x' },
+      plugins: { legend: { labels: { color: '#94a3b8', font: { size: 10 }, boxWidth: 12 } }, tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.95)', titleColor: '#f1f5f9', bodyColor: '#e2e8f0', borderColor: '#334155', borderWidth: 1, padding: 10, cornerRadius: 6, displayColors: true, boxWidth: 8, boxHeight: 8, boxPadding: 4, callbacks: { title: items => items.length && rawDates && rawDates[items[0].dataIndex] ? formatFullTimestamp(rawDates[items[0].dataIndex]) : (items[0].label || ''), label: ctx => ctx.parsed.y !== null && !isNaN(ctx.parsed.y) ? `${ctx.dataset.label}: ${Number(ctx.parsed.y).toFixed(2)}` : null } } },
+      scales: { x: { type: 'category', ticks: { color: '#94a3b8', maxTicksLimit: Math.max(6, Math.min(20, Math.floor(labels.length / 5) || 6)), font: { size: 9 }, maxRotation: 45, autoSkip: true }, grid: { display: false } }, y: yOpts } }
   });
-
-  chart.__rawDates = rawDates;
-  return chart;
+  chart.__rawDates = rawDates; return chart;
 }
 
 function buildRangeButtonsHTML(cardKey) {
   const current = (cardKey === '__global__') ? globalRange : cardStates[cardKey].range;
-  return RANGES.map(r =>
-    `<button class="range-btn${r === current ? ' active' : ''}" data-range="${r}">${RANGE_LABELS[r]}</button>`
-  ).join('');
+  return RANGES.map(r => `<button class="range-btn${r === current ? ' active' : ''}" data-range="${r}">${RANGE_LABELS[r]}</button>`).join('');
 }
 
 function attachRangeHandlers(cardKey) {
-  const container = document.querySelector(`.range-selector[data-card="${cardKey}"]`);
-  if (!container) return;
-  container.querySelectorAll('.range-btn').forEach(btn => {
-    btn.onclick = () => {
-      cardStates[cardKey].range = btn.dataset.range;
-      container.querySelectorAll('.range-btn').forEach(b => b.classList.toggle('active', b === btn));
-      updateCardChart(cardKey);
-    };
-  });
+  const container = document.querySelector(`.range-selector[data-card="${cardKey}"]`); if (!container) return;
+  container.querySelectorAll('.range-btn').forEach(btn => { btn.onclick = () => { cardStates[cardKey].range = btn.dataset.range; container.querySelectorAll('.range-btn').forEach(b => b.classList.toggle('active', b === btn)); updateCardChart(cardKey); }; });
 }
 
 function updateCardChart(cardKey) {
   if (['temperature','humidity','pressure','gas','eco2','tvoc'].includes(cardKey)) updateEnvCard(cardKey);
-  else if (cardKey === 'battery') updateBatteryChart();
-  else if (cardKey === 'solar') updateSolarChart();
-  else if (cardKey === 'drone') updateDroneChart();
-  else if (cardKey === 'acc') updateAccChart();
-  else if (cardKey === 'light') updateLightChart();
-  else if (cardKey === 'sleep') updateSleepChart();
+  else if (cardKey === 'battery') updateBatteryChart(); else if (cardKey === 'solar') updateSolarChart();
+  else if (cardKey === 'drone') updateDroneChart(); else if (cardKey === 'acc') updateAccChart();
+  else if (cardKey === 'light') updateLightChart(); else if (cardKey === 'sleep') updateSleepChart();
 }
 
-// ============================================================
-//  GLOBAL RANGE
-// ============================================================
 function initGlobalRangeBar() {
-  const container = document.querySelector('.range-selector[data-card="__global__"]');
-  if (!container) return;
+  const container = document.querySelector('.range-selector[data-card="__global__"]'); if (!container) return;
   container.innerHTML = buildRangeButtonsHTML('__global__');
-
-  container.querySelectorAll('.range-btn').forEach(btn => {
-    btn.onclick = () => {
-      const range = btn.dataset.range;
-      globalRange = range;
-
-      Object.keys(cardStates).forEach(key => { cardStates[key].range = range; });
-
-      document.querySelectorAll('.range-selector').forEach(sel => {
-        if (sel.dataset.card === '__global__') return;
-        sel.querySelectorAll('.range-btn').forEach(b => {
-          b.classList.toggle('active', b.dataset.range === range);
-        });
-      });
-
-      container.querySelectorAll('.range-btn').forEach(b => {
-        b.classList.toggle('active', b === btn);
-      });
-
-      ['temperature','humidity','pressure','gas','eco2','tvoc','acc','light','sleep'].forEach(updateCardChart);
-      updateBatteryChart();
-      updateSolarChart();
-      updateDroneChart();
-
-      const activeTab = document.querySelector('.drone-tab-btn.active');
-      if (activeTab && activeTab.dataset.view === 'charge') updateDroneChargeChart();
-    };
-  });
+  container.querySelectorAll('.range-btn').forEach(btn => { btn.onclick = () => {
+      globalRange = btn.dataset.range; Object.keys(cardStates).forEach(k => { cardStates[k].range = globalRange; });
+      document.querySelectorAll('.range-selector').forEach(sel => { if (sel.dataset.card !== '__global__') sel.querySelectorAll('.range-btn').forEach(b => b.classList.toggle('active', b.dataset.range === globalRange)); });
+      container.querySelectorAll('.range-btn').forEach(b => b.classList.toggle('active', b === btn));
+      ['temperature','humidity','pressure','gas','eco2','tvoc','acc','light','sleep'].forEach(updateCardChart); updateBatteryChart(); updateSolarChart(); updateDroneChart();
+  }; });
 }
 
-// ============================================================
-//  BATTERY SOC
-// ============================================================
 function voltageToSOC(v) {
   const pts = [{v:12.6,soc:100},{v:12.3,soc:90},{v:12.0,soc:80},{v:11.7,soc:70},{v:11.4,soc:60},{v:11.1,soc:50},{v:10.8,soc:40},{v:10.5,soc:30},{v:10.2,soc:20},{v:9.9,soc:10},{v:9.0,soc:0}];
-  if (v >= pts[0].v) return 100;
-  if (v <= pts[pts.length-1].v) return 0;
-  for (let i=0; i<pts.length-1; i++) {
-    if (v <= pts[i].v && v >= pts[i+1].v) {
-      const t = (v - pts[i+1].v) / (pts[i].v - pts[i+1].v);
-      return pts[i+1].soc + t * (pts[i].soc - pts[i+1].soc);
-    }
-  }
+  if (v >= pts[0].v) return 100; if (v <= pts[pts.length-1].v) return 0;
+  for (let i=0; i<pts.length-1; i++) { if (v <= pts[i].v && v >= pts[i+1].v) { return pts[i+1].soc + ((v - pts[i+1].v) / (pts[i].v - pts[i+1].v)) * (pts[i].soc - pts[i+1].soc); } }
   return 0;
 }
 
-// ============================================================
-//  FETCH
-// ============================================================
+function latestNonNull(feeds, fieldName, parser) {
+  for (let i = feeds.length - 1; i >= 0; i--) { const v = feeds[i][fieldName]; if (v !== undefined && v !== null && v !== '') return parser ? parser(v) : v; }
+  return null;
+}
+
 async function fetchChannels() {
   try {
     const urls = [
       `https://api.thingspeak.com/channels/${CH1.id}/feeds.json?api_key=${CH1.readKey}&results=${RESULTS}`,
       `https://api.thingspeak.com/channels/${CH2.id}/feeds.json?api_key=${CH2.readKey}&results=${RESULTS}`,
       `https://api.thingspeak.com/channels/${CH3.id}/feeds.json?api_key=${CH3.readKey}&results=${RESULTS}`,
+      `https://api.thingspeak.com/channels/${CH4.id}/feeds.json?api_key=${CH4.readKey}&results=${RESULTS}`
     ];
-
-    if (CH4.id && CH4.readKey) {
-      urls.push(`https://api.thingspeak.com/channels/${CH4.id}/feeds.json?api_key=${CH4.readKey}&results=${RESULTS}`);
-    }
-
     const responses = [];
-    for (const url of urls) {
-      try {
-        const res = await fetch(url);
-        if (res.ok) responses.push(await res.json());
-        else responses.push({ feeds: [] });
-      } catch (err) {
-        responses.push({ feeds: [] });
-      }
-      await new Promise(r => setTimeout(r, 300));
-    }
+    for (const url of urls) { try { const res = await fetch(url); responses.push(res.ok ? await res.json() : { feeds: [] }); } catch (e) { responses.push({ feeds: [] }); } await new Promise(r => setTimeout(r, 300)); }
 
-    const feeds1 = (responses[0] && responses[0].feeds) ? responses[0].feeds : [];
-    const feeds2 = (responses[1] && responses[1].feeds) ? responses[1].feeds : [];
-    const feeds3 = (responses[2] && responses[2].feeds) ? responses[2].feeds : [];
-    const feeds4 = (responses[3] && responses[3].feeds) ? responses[3].feeds : [];
+    const feeds1 = responses[0].feeds || [], feeds2 = responses[1].feeds || [], feeds3 = responses[2].feeds || [], feeds4 = responses[3].feeds || [];
 
-    const data1 = feeds1.map(f => {
-      const t = new Date(f.created_at);
-      return { t, shtTemp: parseFloat(f.field1)||null, shtHum: parseFloat(f.field2)||null,
-        bmeTemp: parseFloat(f.field3)||null, bmeHum: parseFloat(f.field4)||null,
-        bmePress: parseFloat(f.field5)||null, bmeGas: parseFloat(f.field6)||null,
-        ccsCO2: parseFloat(f.field7)||null, ccsTVOC: parseFloat(f.field8)||null };
-    }).filter(r => !isNaN(r.t.getTime()));
+    commandState.manualMode   = latestNonNull(feeds2, 'field8', parseInt) ?? 0;
+    commandState.chargeCmd    = latestNonNull(feeds4, 'field2', parseInt) ?? 0;
+    commandState.droneStatus  = latestNonNull(feeds4, 'field3', parseInt) ?? 0;
+    commandState.motorCmd     = latestNonNull(feeds4, 'field4', v => parseInt(v)) || 7; // Default to 7 (Stop)
+    commandState.surveillance = latestNonNull(feeds4, 'field5', parseInt) ?? 0;
+    commandState.dronePower   = latestNonNull(feeds4, 'field6', parseInt) ?? 0;
 
-    const data2 = feeds2.map(f => {
-      const t = new Date(f.created_at);
-      return { t, solarV: parseFloat(f.field1)||null, solarA: parseFloat(f.field2)||null,
-        solarW: parseFloat(f.field3)||null, battV: parseFloat(f.field4)||null,
-        battA: parseFloat(f.field5)||null, battW: parseFloat(f.field6)||null,
-        sleepSec: parseFloat(f.field7)||null, manualMode: parseInt(f.field8)||0 };
-    }).filter(r => !isNaN(r.t.getTime()));
+    latestData = {
+      shtTemp: latestNonNull(feeds1, 'field1', parseFloat), shtHum: latestNonNull(feeds1, 'field2', parseFloat),
+      bmeTemp: latestNonNull(feeds1, 'field3', parseFloat), bmeHum: latestNonNull(feeds1, 'field4', parseFloat),
+      bmePress: latestNonNull(feeds1, 'field5', parseFloat), bmeGas: latestNonNull(feeds1, 'field6', parseFloat),
+      ccsCO2: latestNonNull(feeds1, 'field7', parseFloat), ccsTVOC: latestNonNull(feeds1, 'field8', parseFloat),
+      solarV: latestNonNull(feeds2, 'field1', parseFloat), solarA: latestNonNull(feeds2, 'field2', parseFloat), solarW: latestNonNull(feeds2, 'field3', parseFloat),
+      battV: latestNonNull(feeds2, 'field4', parseFloat), battA: latestNonNull(feeds2, 'field5', parseFloat), battW: latestNonNull(feeds2, 'field6', parseFloat),
+      sleepSec: latestNonNull(feeds2, 'field7', parseFloat),
+      lux: latestNonNull(feeds3, 'field1', parseFloat), accX: latestNonNull(feeds3, 'field2', parseFloat), accY: latestNonNull(feeds3, 'field3', parseFloat), accZ: latestNonNull(feeds3, 'field4', parseFloat),
+      sgpCO2: latestNonNull(feeds3, 'field7', parseFloat), sgpTVOC: latestNonNull(feeds3, 'field8', parseFloat),
+      droneV: latestNonNull(feeds4, 'field1', parseFloat), ultraLeft: latestNonNull(feeds4, 'field7', parseFloat), ultraRight: latestNonNull(feeds4, 'field8', parseFloat)
+    };
 
-    const data3 = feeds3.map(f => {
-      const t = new Date(f.created_at);
-      return { t, lux: parseFloat(f.field1)||null, accX: parseFloat(f.field2)||null,
-        accY: parseFloat(f.field3)||null, accZ: parseFloat(f.field4)||null,
-        gpsLat: parseFloat(f.field5)||null, gpsLon: parseFloat(f.field6)||null,
-        sgpCO2: parseFloat(f.field7)||null, sgpTVOC: parseFloat(f.field8)||null };
-    }).filter(r => !isNaN(r.t.getTime()));
-
-    // [v3] CH4 F2 = charge command (0/1); F7/F8 = ultrasonic in METERS
-    const data4 = feeds4.map(f => {
-      const t = new Date(f.created_at);
-      return {
-        t,
-        droneV:      parseFloat(f.field1)||null,
-        dronePct:    parseFloat(f.field2)||null,
-        droneStatus: (f.field3 !== undefined && f.field3 !== null && f.field3 !== '')
-                       ? parseInt(f.field3) : null,
-        motorCmd:    f.field4 || null,
-        surveillance:f.field5 || null,
-        dronePower:  f.field6 || null,
-        ultraLeft:   parseFloat(f.field7)||null,
-        ultraRight:  parseFloat(f.field8)||null
-      };
-    }).filter(r => !isNaN(r.t.getTime()));
+    const data1 = feeds1.map(f => { const t = new Date(f.created_at); return { t, shtTemp: parseFloat(f.field1)||null, shtHum: parseFloat(f.field2)||null, bmeTemp: parseFloat(f.field3)||null, bmeHum: parseFloat(f.field4)||null, bmePress: parseFloat(f.field5)||null, bmeGas: parseFloat(f.field6)||null, ccsCO2: parseFloat(f.field7)||null, ccsTVOC: parseFloat(f.field8)||null }; }).filter(r => !isNaN(r.t.getTime()));
+    const data2 = feeds2.map(f => { const t = new Date(f.created_at); return { t, solarV: parseFloat(f.field1)||null, solarA: parseFloat(f.field2)||null, solarW: parseFloat(f.field3)||null, battV: parseFloat(f.field4)||null, battA: parseFloat(f.field5)||null, battW: parseFloat(f.field6)||null, sleepSec: parseFloat(f.field7)||null }; }).filter(r => !isNaN(r.t.getTime()));
+    const data3 = feeds3.map(f => { const t = new Date(f.created_at); return { t, lux: parseFloat(f.field1)||null, accX: parseFloat(f.field2)||null, accY: parseFloat(f.field3)||null, accZ: parseFloat(f.field4)||null, sgpCO2: parseFloat(f.field7)||null, sgpTVOC: parseFloat(f.field8)||null }; }).filter(r => !isNaN(r.t.getTime()));
+    const data4 = feeds4.map(f => { const t = new Date(f.created_at); return { t, droneV: parseFloat(f.field1)||null, ultraLeft: parseFloat(f.field7)||null, ultraRight: parseFloat(f.field8)||null }; }).filter(r => !isNaN(r.t.getTime()));
 
     allMergedData = mergeN([data1, data2, data3, data4]);
-
-    syncUIState();
-    renderAll();
+    
+    syncUIState(); renderAll();
 
     if (allMergedData.length > 0) {
-      const latestTime = allMergedData[allMergedData.length-1].t;
-      document.getElementById('lastUpdatedDisplay').textContent = 'Last Update: ' + latestTime.toLocaleString();
+      document.getElementById('lastUpdatedDisplay').textContent = 'Last Update: ' + allMergedData[allMergedData.length-1].t.toLocaleString();
     } else {
       document.getElementById('lastUpdatedDisplay').textContent = 'Last Update: No Data';
     }
-
   } catch (err) {
-    console.error(err);
-    document.getElementById('lastUpdatedDisplay').textContent = 'Last Update: Error';
-    renderAll();
+    console.error(err); document.getElementById('lastUpdatedDisplay').textContent = 'Last Update: Error'; renderAll();
   }
 }
 
 function mergeN(arrays) {
-  const combined = [].concat(...arrays);
-  combined.sort((x,y) => x.t.getTime() - y.t.getTime());
-  const res = [];
-  const tol = 5 * 60 * 1000;
+  const combined = [].concat(...arrays).sort((x,y) => x.t.getTime() - y.t.getTime());
+  const res = []; const tol = 15 * 60 * 1000;
   for (const row of combined) {
     if (res.length === 0) { res.push({...row}); continue; }
     const last = res[res.length-1];
-    if (Math.abs(row.t.getTime() - last.t.getTime()) <= tol) {
-      Object.assign(last, row);
-    } else { res.push({...row}); }
+    if (Math.abs(row.t.getTime() - last.t.getTime()) <= tol) Object.assign(last, row);
+    else res.push({...row});
   }
   return res;
 }
 
-// ============================================================
-//  MAIN RENDER
-// ============================================================
 function renderAll() {
-  const gaugeRow = document.getElementById('gaugeRow');
-  const envGrid = document.getElementById('envGrid');
-
-  gaugeRow.innerHTML = '';
-  gaugeRow.appendChild(createBatteryCard());
-  gaugeRow.appendChild(createSolarCard());
-  gaugeRow.appendChild(createDroneCard());
+  const gaugeRow = document.getElementById('gaugeRow'), envGrid = document.getElementById('envGrid');
+  gaugeRow.innerHTML = ''; gaugeRow.appendChild(createBatteryCard()); gaugeRow.appendChild(createSolarCard()); gaugeRow.appendChild(createDroneCard());
 
   envGrid.innerHTML = '';
   GROUPS.forEach(group => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <h3>${group.name} <span style="font-weight:400;font-size:13px;color:#64748b;">${group.unit}</span></h3>
-      <div class="sub">${group.datasets.map(d=>d.label).join(' · ')}</div>
-      <div class="range-selector" data-card="${group.key}">${buildRangeButtonsHTML(group.key)}</div>
-      <div class="chart-scroll">
-        <div class="chart-inner" id="wrapper-${group.key}">
-          <canvas id="chart-${group.key}"></canvas>
-        </div>
-      </div>`;
+    const card = document.createElement('div'); card.className = 'card';
+    card.innerHTML = `<h3>${group.name} <span style="font-weight:400;font-size:13px;color:#64748b;">${group.unit}</span></h3><div class="sub">${group.datasets.map(d=>d.label).join(' · ')}</div><div class="range-selector" data-card="${group.key}">${buildRangeButtonsHTML(group.key)}</div><div class="chart-scroll"><div class="chart-inner" id="wrapper-${group.key}"><canvas id="chart-${group.key}"></canvas></div></div>`;
     envGrid.appendChild(card);
   });
 
-  const accSel = document.querySelector('.range-selector[data-card="acc"]');
-  if (accSel) accSel.innerHTML = buildRangeButtonsHTML('acc');
-  const lightSel = document.querySelector('.range-selector[data-card="light"]');
-  if (lightSel) lightSel.innerHTML = buildRangeButtonsHTML('light');
-  const sleepSel = document.querySelector('.range-selector[data-card="sleep"]');
-  if (sleepSel) sleepSel.innerHTML = buildRangeButtonsHTML('sleep');
+  ['acc','light','sleep'].forEach(k => { const s = document.querySelector(`.range-selector[data-card="${k}"]`); if (s) s.innerHTML = buildRangeButtonsHTML(k); });
 
   setTimeout(() => {
-    try { setupDroneTabs(); } catch(e){ console.error(e); }
-    try { setupToggles(); } catch(e){ console.error(e); }
+    try { setupDroneTabs(); } catch(e){} try { setupToggles(); } catch(e){}
     ['temperature','humidity','pressure','gas','eco2','tvoc','battery','solar','drone','acc','light','sleep'].forEach(attachRangeHandlers);
-
-    try { createBatteryGaugeAndTrend(); } catch(e){ console.error(e); }
-    try { createSolarGaugeAndTrend(); } catch(e){ console.error(e); }
-    try { createDroneGaugeAndTrend(); } catch(e){ console.error(e); }
-
-    try { ['temperature','humidity','pressure','gas','eco2','tvoc'].forEach(c => updateEnvCard(c)); } catch(e){ console.error(e); }
-    try { updateBatteryChart(); } catch(e){ console.error(e); }
-    try { updateSolarChart(); } catch(e){ console.error(e); }
-    try { updateDroneChart(); } catch(e){ console.error(e); }
-    try { updateAccChart(); } catch(e){ console.error(e); }
-    try { updateLightChart(); } catch(e){ console.error(e); }
-    try { updateSleepChart(); } catch(e){ console.error(e); }
-
-    try { updateGaugesAndStats(); } catch(e){ console.error(e); }
-    try { setupMap(); } catch(e){ console.error(e); }
-    try { updateDateTime(); } catch(e){ console.error(e); }
-    try { updatePhotoGallery(); } catch(e){ console.error(e); }
-
+    try { createBatteryGaugeAndTrend(); } catch(e){}
+    try { createSolarGaugeAndTrend(); } catch(e){}
+    try { createDroneGaugeAndTrend(); } catch(e){}
+    ['temperature','humidity','pressure','gas','eco2','tvoc'].forEach(c => { try { updateEnvCard(c); } catch(e){} });
+    try { updateBatteryChart(); } catch(e){}
+    try { updateSolarChart(); } catch(e){}
+    try { updateDroneChart(); } catch(e){}
+    try { updateAccChart(); } catch(e){}
+    try { updateLightChart(); } catch(e){}
+    try { updateSleepChart(); } catch(e){}
+    try { updateGaugesAndStats(); } catch(e){}
+    try { setupMap(); } catch(e){}
+    try { updateDateTime(); } catch(e){}
+    try { updatePhotoGallery(); } catch(e){}
     window.dispatchEvent(new Event('resize'));
   }, 300);
 }
 
-// ============================================================
-//  CHANNEL WARNING HELPER
-// ============================================================
 function getCHWarning(ch, type) {
-  let isMissing = false;
-  if (ch === 4) {
-    if (type === 'read' && (!CH4.id || !CH4.readKey)) isMissing = true;
-    if (type === 'write' && !CH4.writeKey) isMissing = true;
-  }
+  let isMissing = false; if (ch === 4) { if (type === 'read' && (!CH4.id || !CH4.readKey)) isMissing = true; if (type === 'write' && !CH4.writeKey) isMissing = true; }
   return isMissing ? '<span class="ch-warn">⚠️ CH4 Not Configured</span>' : '';
 }
+function applyChannelWarnings() { if (document.getElementById('warnManual')) document.getElementById('warnManual').innerHTML = getCHWarning(4, 'write'); if (document.getElementById('warnUltrasonic')) document.getElementById('warnUltrasonic').innerHTML = getCHWarning(4, 'read'); if (document.getElementById('warnPhotos')) document.getElementById('warnPhotos').innerHTML = getCHWarning(4, 'read'); }
+function updatePhotoGallery() { const grid = document.getElementById('photoGrid'); if (!grid) return; grid.innerHTML = `<div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div><div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div><div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div><div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>`; }
 
-function applyChannelWarnings() {
-  const warnManual = document.getElementById('warnManual');
-  if (warnManual) warnManual.innerHTML = getCHWarning(4, 'write');
-
-  const warnUltrasonic = document.getElementById('warnUltrasonic');
-  if (warnUltrasonic) warnUltrasonic.innerHTML = getCHWarning(4, 'read');
-
-  const warnPhotos = document.getElementById('warnPhotos');
-  if (warnPhotos) warnPhotos.innerHTML = getCHWarning(4, 'read');
-}
-
-// ============================================================
-//  PHOTO GALLERY
-// ============================================================
-function updatePhotoGallery() {
-  const grid = document.getElementById('photoGrid');
-  if (!grid) return;
-
-  grid.innerHTML = `
-    <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
-    <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
-    <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
-    <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
-  `;
-}
-
-// ============================================================
-//  ENV CARD CHART
-// ============================================================
 function updateEnvCard(cardKey) {
-  const group = GROUPS.find(g => g.key === cardKey);
-  if (!group) return;
-  const state = cardStates[cardKey];
+  const group = GROUPS.find(g => g.key === cardKey), state = cardStates[cardKey];
   const data = filterByRange(allMergedData, state.range);
-  const labels = data.map(r => formatXLabel(r.t, state.range));
-  const rawDates = data.map(r => r.t);
-
-  const wrapper = document.getElementById(`wrapper-${cardKey}`);
-  const canvas = document.getElementById(`chart-${cardKey}`);
+  const wrapper = document.getElementById(`wrapper-${cardKey}`), canvas = document.getElementById(`chart-${cardKey}`);
   if (!wrapper || !canvas) return;
-
-  const datasets = group.datasets.map(ds => {
-    const vals = data.map(r => (r[ds.key] !== null && Number.isFinite(r[ds.key])) ? r[ds.key] : null);
-    return { label: ds.label, data: vals, borderColor: ds.color, backgroundColor: ds.color + '33',
-      borderWidth: 2, pointRadius: 2, pointHoverRadius: 5, tension: 0.2, spanGaps: true, fill: false };
-  });
-
-  const allVals = datasets.flatMap(d => d.data.filter(v => v !== null && Number.isFinite(v)));
-  let minVal = Infinity, maxVal = -Infinity;
-  allVals.forEach(v => { if (v < minVal) minVal = v; if (v > maxVal) maxVal = v; });
-  if (minVal === Infinity) { minVal = 0; maxVal = 1; }
+  const datasets = group.datasets.map(ds => ({ label: ds.label, data: data.map(r => (r[ds.key] !== null && Number.isFinite(r[ds.key])) ? r[ds.key] : null), borderColor: ds.color, backgroundColor: ds.color + '33', borderWidth: 2, pointRadius: 2, tension: 0.2, spanGaps: true }));
+  const allVals = datasets.flatMap(d => d.data.filter(v => v !== null));
+  let minVal = Math.min(...allVals), maxVal = Math.max(...allVals); if (!isFinite(minVal)) { minVal=0; maxVal=1; }
   const pad = (maxVal - minVal) * 0.1 || 1;
-
   if (state.chart) state.chart.destroy();
-  state.chart = renderScrollableChart(canvas, wrapper, labels, datasets,
-    Math.max(0, minVal - pad), maxVal + pad, rawDates);
+  state.chart = renderScrollableChart(canvas, wrapper, data.map(r => formatXLabel(r.t, state.range)), datasets, Math.max(0, minVal - pad), maxVal + pad, data.map(r => r.t));
 }
 
-// ============================================================
-//  BATTERY CARD
-// ============================================================
 function createBatteryCard() {
   const card = document.createElement('div'); card.className = 'card';
-  card.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:6px;">
-      <div>
-        <h3>🔋 Main Battery</h3>
-        <div class="sub">INA260 #2 · 3S8P · 24Ah · 259.2Wh · Samsung 30Q</div>
-      </div>
-      <button class="toggle-btn" id="batteryToggleBtn">Chart</button>
-    </div>
-    <div id="batteryGaugeContainer" class="gauge-container active">
-      <div class="gauge-wrapper">
-        <div class="gauge-canvas">
-          <canvas id="batteryGaugeCanvas" width="150" height="150"></canvas>
-          <div class="gauge-center">
-            <div class="value" id="battVoltageDisplay">0.00</div>
-            <div class="unit">V</div>
-            <div class="sub" id="battSocDisplay">0% SoC</div>
-          </div>
-        </div>
-        <div class="gauge-stats">
-          <span class="stat">A <strong id="battAStat">0.000</strong></span>
-          <span class="stat">W <strong id="battWStat">0.00</strong></span>
-          <span class="stat">SoC <strong id="battPctStat">0.0</strong>%</span>
-        </div>
-      </div>
-      <div class="trend-container">
-        <div class="sub" style="margin-bottom:4px;">Voltage Trend · 24H</div>
-        <div class="trend-chart"><canvas id="batteryTrendChart"></canvas></div>
-      </div>
-    </div>
-    <div id="batteryChartContainer" class="chart-container-view">
-      <div class="range-selector" data-card="battery">${buildRangeButtonsHTML('battery')}</div>
-      <div class="chart-scroll">
-        <div class="chart-inner" id="batteryWrapper" style="height:250px;">
-          <canvas id="batteryLineChart"></canvas>
-        </div>
-      </div>
-    </div>
-  `;
+  card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:6px;"><div><h3>🔋 Main Battery</h3><div class="sub">INA260 #2 · 3S8P · 24Ah</div></div><button class="toggle-btn" id="batteryToggleBtn">Chart</button></div><div id="batteryGaugeContainer" class="gauge-container active"><div class="gauge-wrapper"><div class="gauge-canvas"><canvas id="batteryGaugeCanvas" width="150" height="150"></canvas><div class="gauge-center"><div class="value" id="battVoltageDisplay">0.00</div><div class="unit">V</div><div class="sub" id="battSocDisplay">0% SoC</div></div></div><div class="gauge-stats"><span class="stat">A <strong id="battAStat">0.000</strong></span><span class="stat">W <strong id="battWStat">0.00</strong></span><span class="stat">SoC <strong id="battPctStat">0.0</strong>%</span></div></div><div class="trend-container"><div class="sub" style="margin-bottom:4px;">Voltage Trend · 24H</div><div class="trend-chart"><canvas id="batteryTrendChart"></canvas></div></div></div><div id="batteryChartContainer" class="chart-container-view"><div class="range-selector" data-card="battery">${buildRangeButtonsHTML('battery')}</div><div class="chart-scroll"><div class="chart-inner" id="batteryWrapper" style="height:250px;"><canvas id="batteryLineChart"></canvas></div></div></div>`;
   return card;
 }
-
-function createBatteryGaugeAndTrend() {
-  const ctx = document.getElementById('batteryGaugeCanvas').getContext('2d');
-  cardStates.battery.gauge = createGreenGauge(ctx);
-  const tCtx = document.getElementById('batteryTrendChart').getContext('2d');
-  cardStates.battery.trend = createTrendChart(tCtx, '#22c55e');
-}
-
+function createBatteryGaugeAndTrend() { cardStates.battery.gauge = createGreenGauge(document.getElementById('batteryGaugeCanvas').getContext('2d')); cardStates.battery.trend = createTrendChart(document.getElementById('batteryTrendChart').getContext('2d'), '#22c55e'); }
 function updateBatteryChart() {
-  const state = cardStates.battery;
-  const data = filterByRange(allMergedData, state.range);
-  const labels = data.map(r => formatXLabel(r.t, state.range));
-  const rawDates = data.map(r => r.t);
-
-  const wrapper = document.getElementById('batteryWrapper');
-  const canvas = document.getElementById('batteryLineChart');
-  if (!wrapper || !canvas) return;
-
-  const datasets = [
-    { label:'Voltage (V)', data: data.map(r => r.battV ?? null), borderColor:'#3b82f6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
-    { label:'Current (A)', data: data.map(r => r.battA ?? null), borderColor:'#8b5cf6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
-    { label:'Power (W)',   data: data.map(r => r.battW ?? null), borderColor:'#ec4899', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
-    { label:'SoC (%)',     data: data.map(r => voltageToSOC(r.battV ?? 0)), borderColor:'#14b8a6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
-  ];
-
-  if (state.chart) state.chart.destroy();
-  state.chart = renderScrollableChart(canvas, wrapper, labels, datasets, 0, undefined, rawDates);
+  const state = cardStates.battery, data = filterByRange(allMergedData, state.range);
+  const wrapper = document.getElementById('batteryWrapper'), canvas = document.getElementById('batteryLineChart'); if (!wrapper || !canvas) return;
+  const datasets = [{ label:'Voltage (V)', data: data.map(r => r.battV ?? null), borderColor:'#3b82f6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }, { label:'Current (A)', data: data.map(r => r.battA ?? null), borderColor:'#8b5cf6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }, { label:'Power (W)', data: data.map(r => r.battW ?? null), borderColor:'#ec4899', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }, { label:'SoC (%)', data: data.map(r => r.battV != null ? voltageToSOC(r.battV) : null), borderColor:'#14b8a6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }];
+  if (state.chart) state.chart.destroy(); state.chart = renderScrollableChart(canvas, wrapper, data.map(r => formatXLabel(r.t, state.range)), datasets, 0, undefined, data.map(r => r.t));
 }
 
-// ============================================================
-//  SOLAR CARD
-// ============================================================
 function createSolarCard() {
   const card = document.createElement('div'); card.className = 'card';
-  card.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:6px;">
-      <div>
-        <h3>☀️ Solar</h3>
-        <div class="sub">INA260 #1 · 20W 12V Monocrystalline</div>
-      </div>
-      <button class="toggle-btn" id="solarToggleBtn">Chart</button>
-    </div>
-    <div id="solarGaugeContainer" class="gauge-container active">
-      <div class="gauge-wrapper">
-        <div class="gauge-canvas">
-          <canvas id="solarGaugeCanvas" width="150" height="150"></canvas>
-          <div class="gauge-center">
-            <div class="value" id="solarVoltageDisplay">0.0</div>
-            <div class="unit">V</div>
-            <div class="sub" id="solarStatusDisplay">--</div>
-          </div>
-        </div>
-        <div class="gauge-stats">
-          <span class="stat">W <strong id="solarWStat">0.00</strong></span>
-          <span class="stat">A <strong id="solarAStat">0.000</strong></span>
-          <span class="stat">Yield <strong id="solarYieldStat">0.0</strong>Wh</span>
-        </div>
-      </div>
-      <div class="trend-container">
-        <div class="sub" style="margin-bottom:4px;">Solar Harvest · 24H</div>
-        <div class="trend-chart"><canvas id="solarTrendChart"></canvas></div>
-      </div>
-    </div>
-    <div id="solarChartContainer" class="chart-container-view">
-      <div class="range-selector" data-card="solar">${buildRangeButtonsHTML('solar')}</div>
-      <div class="chart-scroll">
-        <div class="chart-inner" id="solarWrapper" style="height:250px;">
-          <canvas id="solarLineChart"></canvas>
-        </div>
-      </div>
-    </div>
-  `;
+  card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:6px;"><div><h3>☀️ Solar</h3><div class="sub">INA260 #1 · 20W 12V</div></div><button class="toggle-btn" id="solarToggleBtn">Chart</button></div><div id="solarGaugeContainer" class="gauge-container active"><div class="gauge-wrapper"><div class="gauge-canvas"><canvas id="solarGaugeCanvas" width="150" height="150"></canvas><div class="gauge-center"><div class="value" id="solarVoltageDisplay">0.0</div><div class="unit">V</div><div class="sub" id="solarStatusDisplay">--</div></div></div><div class="gauge-stats"><span class="stat">W <strong id="solarWStat">0.00</strong></span><span class="stat">A <strong id="solarAStat">0.000</strong></span><span class="stat">Yield <strong id="solarYieldStat">0.0</strong>Wh</span></div></div><div class="trend-container"><div class="sub" style="margin-bottom:4px;">Solar Harvest · 24H</div><div class="trend-chart"><canvas id="solarTrendChart"></canvas></div></div></div><div id="solarChartContainer" class="chart-container-view"><div class="range-selector" data-card="solar">${buildRangeButtonsHTML('solar')}</div><div class="chart-scroll"><div class="chart-inner" id="solarWrapper" style="height:250px;"><canvas id="solarLineChart"></canvas></div></div></div>`;
   return card;
 }
-
-function createSolarGaugeAndTrend() {
-  const ctx = document.getElementById('solarGaugeCanvas').getContext('2d');
-  cardStates.solar.gauge = createStandardGauge(ctx);
-  const tCtx = document.getElementById('solarTrendChart').getContext('2d');
-  cardStates.solar.trend = createTrendChart(tCtx, '#f59e0b');
-}
-
+function createSolarGaugeAndTrend() { cardStates.solar.gauge = createStandardGauge(document.getElementById('solarGaugeCanvas').getContext('2d')); cardStates.solar.trend = createTrendChart(document.getElementById('solarTrendChart').getContext('2d'), '#f59e0b'); }
 function updateSolarChart() {
-  const state = cardStates.solar;
-  const data = filterByRange(allMergedData, state.range);
-  const labels = data.map(r => formatXLabel(r.t, state.range));
-  const rawDates = data.map(r => r.t);
-
-  const wrapper = document.getElementById('solarWrapper');
-  const canvas = document.getElementById('solarLineChart');
-  if (!wrapper || !canvas) return;
-
-  const datasets = [
-    { label:'Voltage (V)', data: data.map(r => r.solarV ?? null), borderColor:'#f59e0b', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
-    { label:'Current (A)', data: data.map(r => r.solarA ?? null), borderColor:'#f97316', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
-    { label:'Power (W)',   data: data.map(r => r.solarW ?? null), borderColor:'#ef4444', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
-  ];
-
-  if (state.chart) state.chart.destroy();
-  state.chart = renderScrollableChart(canvas, wrapper, labels, datasets, 0, undefined, rawDates);
+  const state = cardStates.solar, data = filterByRange(allMergedData, state.range);
+  const wrapper = document.getElementById('solarWrapper'), canvas = document.getElementById('solarLineChart'); if (!wrapper || !canvas) return;
+  const datasets = [{ label:'Voltage (V)', data: data.map(r => r.solarV ?? null), borderColor:'#f59e0b', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }, { label:'Current (A)', data: data.map(r => r.solarA ?? null), borderColor:'#f97316', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }, { label:'Power (W)', data: data.map(r => r.solarW ?? null), borderColor:'#ef4444', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }];
+  if (state.chart) state.chart.destroy(); state.chart = renderScrollableChart(canvas, wrapper, data.map(r => formatXLabel(r.t, state.range)), datasets, 0, undefined, data.map(r => r.t));
 }
 
-// ============================================================
-//  DRONE BATTERY CARD
-// ============================================================
 function createDroneCard() {
   const card = document.createElement('div'); card.className = 'card';
-  card.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:6px;">
-      <div>
-        <h3>🚁 🔋 Drone Battery ${getCHWarning(4, 'read')}</h3>
-        <div class="sub">CH4 · Drone Telemetry</div>
-      </div>
-      <div class="tab-group">
-        <button class="tab-btn drone-tab-btn active" data-view="gauge">Gauge</button>
-        <button class="tab-btn drone-tab-btn" data-view="trend">Trend</button>
-        <button class="tab-btn drone-tab-btn" data-view="charge">Charge</button>
-      </div>
-    </div>
-
-    <div id="droneGaugeContainer" class="gauge-container active">
-      <div class="gauge-wrapper">
-        <div class="gauge-canvas">
-          <canvas id="droneGaugeCanvas" width="150" height="150"></canvas>
-          <div class="gauge-center">
-            <div class="value" id="droneVoltageDisplay">--</div>
-            <div class="unit">V</div>
-            <div class="sub" id="droneSocDisplay">--% SoC</div>
-          </div>
-        </div>
-        <div class="gauge-stats">
-          <span class="stat">SoC <strong id="dronePctStat">--</strong>%</span>
-        </div>
-        <div style="margin-top:8px;display:flex;justify-content:center;" id="droneStatusRow">
-          <span class="charge-badge idle" id="droneStatusBadge">
-            <span class="dot"></span><span id="droneStatusText">Idle</span>
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <div id="droneChartContainer" class="chart-container-view">
-      <div class="range-selector" data-card="drone">${buildRangeButtonsHTML('drone')}</div>
-      <div class="chart-scroll">
-        <div class="chart-inner" id="droneWrapper" style="height:250px;">
-          <canvas id="droneLineChart"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <div id="droneChargeContainer" class="chart-container-view">
-      <div class="sub" style="margin-bottom:4px;">Charging Duration per Day (Hours)</div>
-      <div class="chart-scroll">
-        <div class="chart-inner" id="droneChargeWrapper" style="height:250px;">
-          <canvas id="droneChargeChart"></canvas>
-        </div>
-      </div>
-    </div>
-  `;
+  card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:6px;"><div><h3>🚁 🔋 Drone Battery ${getCHWarning(4, 'read')}</h3><div class="sub">CH4 · Drone Telemetry</div></div><div class="tab-group"><button class="tab-btn drone-tab-btn active" data-view="gauge">Gauge</button><button class="tab-btn drone-tab-btn" data-view="trend">Trend</button></div></div><div id="droneGaugeContainer" class="gauge-container active"><div class="gauge-wrapper"><div class="gauge-canvas"><canvas id="droneGaugeCanvas" width="150" height="150"></canvas><div class="gauge-center"><div class="value" id="droneVoltageDisplay">--</div><div class="unit">V</div><div class="sub" id="droneSocDisplay">--% SoC</div></div></div><div class="gauge-stats"><span class="stat">SoC <strong id="dronePctStat">--</strong>%</span></div><div style="margin-top:8px;display:flex;justify-content:center;"><span class="charge-badge idle" id="droneStatusBadge"><span class="dot"></span><span id="droneStatusText">Idle</span></span></div></div></div><div id="droneChartContainer" class="chart-container-view"><div class="range-selector" data-card="drone">${buildRangeButtonsHTML('drone')}</div><div class="chart-scroll"><div class="chart-inner" id="droneWrapper" style="height:250px;"><canvas id="droneLineChart"></canvas></div></div></div>`;
   return card;
 }
-
-function createDroneGaugeAndTrend() {
-  const ctx = document.getElementById('droneGaugeCanvas').getContext('2d');
-  cardStates.drone.gauge = createGreenGauge(ctx);
-  const tCtx = document.getElementById('droneTrendChart').getContext('2d');
-  cardStates.drone.trend = createTrendChart(tCtx, '#a78bfa');
-}
-
-// [v3] SoC computed from voltage (F2 no longer carries %)
+function createDroneGaugeAndTrend() { cardStates.drone.gauge = createGreenGauge(document.getElementById('droneGaugeCanvas').getContext('2d')); cardStates.drone.trend = createTrendChart(document.getElementById('droneTrendChart').getContext('2d'), '#a78bfa'); }
 function updateDroneChart() {
-  const state = cardStates.drone;
-  const data = filterByRange(allMergedData, state.range);
-  const labels = data.map(r => formatXLabel(r.t, state.range));
-  const rawDates = data.map(r => r.t);
-
-  const wrapper = document.getElementById('droneWrapper');
-  const canvas = document.getElementById('droneLineChart');
-  if (!wrapper || !canvas) return;
-
-  const datasets = [
-    { label:'Voltage (V)', data: data.map(r => r.droneV ?? null),
-      borderColor:'#a78bfa', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
-    { label:'SoC (%)', data: data.map(r => r.droneV !== null && r.droneV !== undefined ? voltageToSOC(r.droneV) : null),
-      borderColor:'#14b8a6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true },
-  ];
-
-  if (state.chart) state.chart.destroy();
-  state.chart = renderScrollableChart(canvas, wrapper, labels, datasets, 0, undefined, rawDates);
+  const state = cardStates.drone, data = filterByRange(allMergedData, state.range);
+  const wrapper = document.getElementById('droneWrapper'), canvas = document.getElementById('droneLineChart'); if (!wrapper || !canvas) return;
+  const datasets = [{ label:'Voltage (V)', data: data.map(r => r.droneV ?? null), borderColor:'#a78bfa', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }, { label:'SoC (%)', data: data.map(r => r.droneV != null ? voltageToSOC(r.droneV) : null), borderColor:'#14b8a6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }];
+  if (state.chart) state.chart.destroy(); state.chart = renderScrollableChart(canvas, wrapper, data.map(r => formatXLabel(r.t, state.range)), datasets, 0, undefined, data.map(r => r.t));
 }
 
-function updateDroneChargeChart() {
-  const state = cardStates.drone;
-  const data = filterByRange(allMergedData, state.range);
-  if (!data.length) return;
-
-  const dailyCharge = {};
-
-  for (let i = 1; i < data.length; i++) {
-    const prev = data[i-1];
-    const curr = data[i];
-    const dtHours = (curr.t - prev.t) / (1000 * 60 * 60);
-
-    if (dtHours > 0 && dtHours < 1 && prev.droneStatus === 1) {
-      const day = curr.t.toISOString().slice(0, 10);
-      dailyCharge[day] = (dailyCharge[day] || 0) + dtHours;
-    }
-  }
-
-  const labels = Object.keys(dailyCharge).sort();
-  const values = labels.map(d => dailyCharge[d].toFixed(2));
-
-  const wrapper = document.getElementById('droneChargeWrapper');
-  const canvas = document.getElementById('droneChargeChart');
-  if (!wrapper || !canvas) return;
-
-  const containerW = wrapper.parentElement.clientWidth;
-  wrapper.style.width = Math.max(containerW || 400, labels.length * 60) + 'px';
-  wrapper.style.height = '250px';
-
-  if (state.chargeChart) state.chargeChart.destroy();
-  const ctx = canvas.getContext('2d');
-
-  state.chargeChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Charging (hours)',
-        data: values,
-        backgroundColor: '#3b82f6',
-        borderRadius: 4
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: (ctx) => `${ctx.parsed.y} hours` } }
-      },
-      scales: {
-        x: { type: 'category', ticks: { color: '#94a3b8' }, grid: { display: false } },
-        y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' }, beginAtZero: true }
-      }
-    }
-  });
-}
-
-// ============================================================
-//  ACC & LIGHT CHARTS
-// ============================================================
 function updateAccChart() {
-  const state = cardStates.acc;
-  const data = filterByRange(allMergedData, state.range);
-  const labels = data.map(r => formatXLabel(r.t, state.range));
-  const rawDates = data.map(r => r.t);
-
-  const wrapper = document.getElementById('accWrapper');
-  const canvas = document.getElementById('accChart');
-  if (!wrapper || !canvas) return;
-
-  const datasets = ['accX','accY','accZ'].map((key,i) => ({
-    label: key.replace('acc',''),
-    data: data.map(r => r[key] ?? null),
-    borderColor: ['#4ade80','#60a5fa','#fb923c'][i],
-    borderWidth: 2, pointRadius: 2, pointHoverRadius: 5, tension: 0.2, spanGaps: true, fill: false
-  }));
-  const allVals = datasets.flatMap(d => d.data.filter(v => v !== null && Number.isFinite(v)));
-  let minVal = Infinity, maxVal = -Infinity;
-  allVals.forEach(v => { if (v < minVal) minVal = v; if (v > maxVal) maxVal = v; });
-  if (minVal === Infinity) { minVal = -1; maxVal = 1; }
-  const pad = (maxVal - minVal) * 0.1 || 1;
-
-  if (state.chart) state.chart.destroy();
-  state.chart = renderScrollableChart(canvas, wrapper, labels, datasets,
-    minVal - pad, maxVal + pad, rawDates);
+  const state = cardStates.acc, data = filterByRange(allMergedData, state.range);
+  const wrapper = document.getElementById('accWrapper'), canvas = document.getElementById('accChart'); if (!wrapper || !canvas) return;
+  const datasets = ['accX','accY','accZ'].map((key,i) => ({ label: key.replace('acc',''), data: data.map(r => r[key] ?? null), borderColor: ['#4ade80','#60a5fa','#fb923c'][i], borderWidth: 2, pointRadius: 2, tension: 0.2, spanGaps: true }));
+  if (state.chart) state.chart.destroy(); state.chart = renderScrollableChart(canvas, wrapper, data.map(r => formatXLabel(r.t, state.range)), datasets, -20, 20, data.map(r => r.t));
 }
-
 function updateLightChart() {
-  const state = cardStates.light;
-  const data = filterByRange(allMergedData, state.range);
-  const labels = data.map(r => formatXLabel(r.t, state.range));
-  const rawDates = data.map(r => r.t);
-
-  const wrapper = document.getElementById('lightWrapper');
-  const canvas = document.getElementById('lightChart');
-  if (!wrapper || !canvas) return;
-
-  const lightData = data.map(r => r.lux ?? null);
-  const vals = lightData.filter(v => v !== null && Number.isFinite(v));
-  let minVal = Infinity, maxVal = -Infinity;
-  vals.forEach(v => { if (v < minVal) minVal = v; if (v > maxVal) maxVal = v; });
-  if (minVal === Infinity) { minVal = 0; maxVal = 1; }
-  const pad = (maxVal - minVal) * 0.1 || 1;
-
-  const datasets = [{
-    label: 'Lux', data: lightData,
-    borderColor: '#facc15', backgroundColor: '#facc1533',
-    borderWidth: 2, pointRadius: 2, pointHoverRadius: 5, tension: 0.2, spanGaps: true, fill: true
-  }];
-
-  if (state.chart) state.chart.destroy();
-  state.chart = renderScrollableChart(canvas, wrapper, labels, datasets,
-    Math.max(0, minVal - pad), maxVal + pad, rawDates);
+  const state = cardStates.light, data = filterByRange(allMergedData, state.range);
+  const wrapper = document.getElementById('lightWrapper'), canvas = document.getElementById('lightChart'); if (!wrapper || !canvas) return;
+  const datasets = [{ label: 'Lux', data: data.map(r => r.lux ?? null), borderColor: '#facc15', backgroundColor: '#facc1533', borderWidth: 2, pointRadius: 2, tension: 0.2, spanGaps: true, fill: true }];
+  if (state.chart) state.chart.destroy(); state.chart = renderScrollableChart(canvas, wrapper, data.map(r => formatXLabel(r.t, state.range)), datasets, 0, undefined, data.map(r => r.t));
 }
-
-// ============================================================
-//  SLEEP DURATION CHART
-// ============================================================
 function updateSleepChart() {
-  const state = cardStates.sleep;
-  const data = filterByRange(allMergedData, state.range);
-  const labels = data.map(r => formatXLabel(r.t, state.range));
-  const rawDates = data.map(r => r.t);
-
-  const wrapper = document.getElementById('sleepWrapper');
-  const canvas = document.getElementById('sleepChart');
-  if (!wrapper || !canvas) return;
-
-  const sleepData = data.map(r => (r.sleepSec !== null && Number.isFinite(r.sleepSec)) ? (r.sleepSec/60) : null);
-  const vals = sleepData.filter(v => v !== null && Number.isFinite(v));
-  let minVal = Infinity, maxVal = -Infinity;
-  vals.forEach(v => { if (v < minVal) minVal = v; if (v > maxVal) maxVal = v; });
-  if (minVal === Infinity) { minVal = 0; maxVal = 1; }
-  const pad = (maxVal - minVal) * 0.1 || 1;
-
-  const datasets = [{
-    label: 'Sleep (min)', data: sleepData,
-    borderColor: '#6366f1', backgroundColor: '#6366f133',
-    borderWidth: 2, pointRadius: 2, pointHoverRadius: 5,
-    tension: 0.2, spanGaps: true, fill: true
-  }];
-
-  if (state.chart) state.chart.destroy();
-  state.chart = renderScrollableChart(canvas, wrapper, labels, datasets,
-    Math.max(0, minVal - pad), maxVal + pad, rawDates);
+  const state = cardStates.sleep, data = filterByRange(allMergedData, state.range);
+  const wrapper = document.getElementById('sleepWrapper'), canvas = document.getElementById('sleepChart'); if (!wrapper || !canvas) return;
+  const datasets = [{ label: 'Sleep (min)', data: data.map(r => (r.sleepSec != null && Number.isFinite(r.sleepSec)) ? r.sleepSec/60 : null), borderColor: '#6366f1', backgroundColor: '#6366f133', borderWidth: 2, pointRadius: 2, tension: 0.2, spanGaps: true, fill: true }];
+  if (state.chart) state.chart.destroy(); state.chart = renderScrollableChart(canvas, wrapper, data.map(r => formatXLabel(r.t, state.range)), datasets, 0, undefined, data.map(r => r.t));
 }
 
-// ============================================================
-//  GAUGE BUILDERS
-// ============================================================
 function trackColors(steps, isGreen) {
   const colors = [];
-  for (let i = 0; i < steps; i++) {
-    const t = i / (steps - 1);
-    let c;
-    if (isGreen) {
-      c = [74 + (22 - 74) * t, 222 + (101 - 222) * t, 128 + (52 - 128) * t];
-    } else {
-      const red = [239,68,68], yellow=[250,204,21], green=[74,222,128];
-      if (t < 0.5) {
-        const p = t / 0.5;
-        c = [red[0]+(yellow[0]-red[0])*p, red[1]+(yellow[1]-red[1])*p, red[2]+(yellow[2]-red[2])*p];
-      } else {
-        const p = (t - 0.5) / 0.5;
-        c = [yellow[0]+(green[0]-yellow[0])*p, yellow[1]+(green[1]-yellow[1])*p, yellow[2]+(green[2]-yellow[2])*p];
-      }
-    }
+  for (let i = 0; i < steps; i++) { const t = i / (steps - 1); let c;
+    if (isGreen) { c = [74 + (22 - 74) * t, 222 + (101 - 222) * t, 128 + (52 - 128) * t]; }
+    else { const red=[239,68,68], yellow=[250,204,21], green=[74,222,128];
+      if (t < 0.5) { const p = t / 0.5; c = [red[0]+(yellow[0]-red[0])*p, red[1]+(yellow[1]-red[1])*p, red[2]+(yellow[2]-red[2])*p]; }
+      else { const p = (t - 0.5) / 0.5; c = [yellow[0]+(green[0]-yellow[0])*p, yellow[1]+(green[1]-yellow[1])*p, yellow[2]+(green[2]-yellow[2])*p]; } }
     colors.push(`rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`);
   }
   return colors;
 }
+function createGreenGauge(ctx) { const steps=24, colors=trackColors(steps,true); const c = new Chart(ctx, { type:'doughnut', data:{datasets:[{data:Array(steps).fill(1), backgroundColor:colors, borderWidth:0, circumference:270, rotation:-135}]}, options:{responsive:true, maintainAspectRatio:false, cutout:'78%', plugins:{legend:{display:false}, tooltip:{enabled:false}}, animation:false} }); c.data.datasets[0].originalColors = colors; return c; }
+function createStandardGauge(ctx) { const steps=24, colors=trackColors(steps,false); const c = new Chart(ctx, { type:'doughnut', data:{datasets:[{data:Array(steps).fill(1), backgroundColor:colors, borderWidth:0, circumference:270, rotation:-135}]}, options:{responsive:true, maintainAspectRatio:false, cutout:'78%', plugins:{legend:{display:false}, tooltip:{enabled:false}}, animation:false} }); c.data.datasets[0].originalColors = colors; return c; }
+function updateGaugeValue(chart, percent) { if (!chart) return; const clamped = Math.min(100, Math.max(0, percent)); const filled = Math.round((clamped / 100) * chart.data.datasets[0].data.length); const orig = chart.data.datasets[0].originalColors; chart.data.datasets[0].backgroundColor = orig.map((c, i) => i < filled ? c : '#334155'); chart.update('none'); }
+function createTrendChart(ctx, color) { return new Chart(ctx, { type:'line', data:{labels:[], datasets:[{data:[], borderColor:color, borderWidth:2, pointRadius:0, tension:0.3, fill:false}]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{type:'category', grid:{display:false}, ticks:{display:false}}, y:{grid:{display:false}, ticks:{display:false}}} } }); }
 
-function createGreenGauge(ctx) {
-  const steps = 24;
-  const colors = trackColors(steps, true);
-  const chart = new Chart(ctx, {
-    type: 'doughnut',
-    data: { datasets: [{ data: Array(steps).fill(1), backgroundColor: colors, borderWidth: 0, circumference: 270, rotation: -135 }] },
-    options: { responsive: true, maintainAspectRatio: false, cutout: '78%', plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: false }
-  });
-  chart.data.datasets[0].originalColors = colors;
-  return chart;
-}
+let map = null;
+function setupMap() { if (document.getElementById('map') && !map) { map = L.map('map', { zoomControl: true }).setView([STATIC_LAT, STATIC_LON], STATIC_ZOOM); L.maplibreGL({style: 'https://tiles.waymorphic.com/styles/fiord', attribution: '&copy; OpenStreetMap'}).addTo(map); L.marker([STATIC_LAT, STATIC_LON]).addTo(map).bindPopup(`<b>Sloth Bot</b><br>Lat: ${STATIC_LAT}<br>Lon: ${STATIC_LON}`); } }
 
-function createStandardGauge(ctx) {
-  const steps = 24;
-  const colors = trackColors(steps, false);
-  const chart = new Chart(ctx, {
-    type: 'doughnut',
-    data: { datasets: [{ data: Array(steps).fill(1), backgroundColor: colors, borderWidth: 0, circumference: 270, rotation: -135 }] },
-    options: { responsive: true, maintainAspectRatio: false, cutout: '78%', plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: false }
-  });
-  chart.data.datasets[0].originalColors = colors;
-  return chart;
-}
-
-function updateGaugeValue(chart, percent) {
-  if (!chart) return;
-  const clamped = Math.min(100, Math.max(0, percent));
-  const steps = chart.data.datasets[0].data.length;
-  const filled = Math.round((clamped / 100) * steps);
-
-  const originalColors = chart.data.datasets[0].originalColors;
-  const newColors = originalColors.map((c, i) => i < filled ? c : '#334155');
-
-  chart.data.datasets[0].backgroundColor = newColors;
-  chart.update('none');
-}
-
-function createTrendChart(ctx, color) {
-  return new Chart(ctx, { type:'line', data:{ labels:[], datasets:[{ data:[], borderColor:color, borderWidth:2, pointRadius:0, tension:0.3, fill:false }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} },
-      scales:{ x:{ type:'category', grid:{display:false}, ticks:{display:false} }, y:{ grid:{display:false}, ticks:{display:false} } } } });
-}
-
-// ============================================================
-//  MAP
-// ============================================================
-let map = null, mapMarker = null, mapInitialized = false;
-
-function setupMap() {
-  if (document.getElementById('map') && !map) {
-    map = L.map('map', { zoomControl: true }).setView([STATIC_LAT, STATIC_LON], STATIC_ZOOM);
-
-    L.maplibreGL({
-      style: 'https://tiles.waymorphic.com/styles/fiord',
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-
-    mapMarker = L.marker([STATIC_LAT, STATIC_LON]).addTo(map);
-    mapMarker.bindPopup(`<b>Sloth Bot</b><br>Lat: ${STATIC_LAT}<br>Lon: ${STATIC_LON}`);
-
-    mapInitialized = true;
-  }
-}
-
-function updateMap() { /* static */ }
-
-// ============================================================
-//  UPDATE GAUGES + STATS + ULTRASONIC SCENE
-// ============================================================
 function updateGaugesAndStats() {
-  if (allMergedData.length === 0) return;
-  const last = allMergedData[allMergedData.length-1];
+  if (!latestData || Object.keys(latestData).length === 0) return;
+  const last = latestData;
   const $ = id => document.getElementById(id);
 
-  // ---- Main Battery ----
+  // Battery
   const bV = last.battV ?? 0, bA = last.battA ?? 0, bW = last.battW ?? 0;
   const soc = voltageToSOC(bV);
   if ($('battVoltageDisplay')) $('battVoltageDisplay').textContent = bV.toFixed(2);
@@ -1604,48 +918,36 @@ function updateGaugesAndStats() {
   if ($('battAStat'))          $('battAStat').textContent = bA.toFixed(3);
   if ($('battWStat'))          $('battWStat').textContent = bW.toFixed(2);
   if ($('battPctStat'))        $('battPctStat').textContent = soc.toFixed(1);
-
   if (cardStates.battery.gauge) updateGaugeValue(cardStates.battery.gauge, soc);
-
   if (cardStates.battery.trend) {
-    const trend = allMergedData.slice(-60);
+    const trend = allMergedData.filter(r => r.battV != null).slice(-60);
     cardStates.battery.trend.data.labels = trend.map(r => formatXLabel(r.t, '24H'));
     cardStates.battery.trend.data.datasets[0].data = trend.map(r => r.battV);
     cardStates.battery.trend.update('none');
   }
 
-  // ---- Solar ----
+  // Solar
   const sV = last.solarV ?? 0, sA = last.solarA ?? 0, sW = last.solarW ?? 0;
-  const sPct = Math.min(100, (sV / 18) * 100);
   if ($('solarVoltageDisplay')) $('solarVoltageDisplay').textContent = sV.toFixed(1);
   if ($('solarStatusDisplay'))  $('solarStatusDisplay').textContent = sV < 1.0 ? 'Night Mode' : 'Harvesting';
   if ($('solarWStat'))          $('solarWStat').textContent = sW.toFixed(2);
   if ($('solarAStat'))          $('solarAStat').textContent = sA.toFixed(3);
-
   if ($('solarYieldStat')) {
     const today = new Date().toISOString().slice(0,10);
-    const todayData = allMergedData.filter(r => r.t.toISOString().slice(0,10) === today);
-    let yieldWh = 0;
-    for (let i=1; i<todayData.length; i++) {
-      const dt = (todayData[i].t - todayData[i-1].t) / 3600000;
-      if (dt > 0 && dt < 1) yieldWh += (todayData[i].solarW ?? 0) * dt;
-    }
-    $('solarYieldStat').textContent = yieldWh.toFixed(2);
+    let yld = 0;
+    allMergedData.filter(r => r.t.toISOString().slice(0,10) === today).forEach((r, i, arr) => { if (i > 0) { const dt = (r.t - arr[i-1].t) / 3600000; if (dt > 0 && dt < 1) yld += (r.solarW ?? 0) * dt; } });
+    $('solarYieldStat').textContent = yld.toFixed(2);
   }
-
-  if (cardStates.solar.gauge) updateGaugeValue(cardStates.solar.gauge, sPct);
-
+  if (cardStates.solar.gauge) updateGaugeValue(cardStates.solar.gauge, Math.min(100, (sV / 18) * 100));
   if (cardStates.solar.trend) {
-    const sTrend = allMergedData.slice(-60);
+    const sTrend = allMergedData.filter(r => r.solarW != null).slice(-60);
     cardStates.solar.trend.data.labels = sTrend.map(r => formatXLabel(r.t, '24H'));
     cardStates.solar.trend.data.datasets[0].data = sTrend.map(r => r.solarW);
     cardStates.solar.trend.update('none');
   }
 
-  // ---- Drone Battery (CH4) - [v3] SoC always from voltage ----
+  // Drone
   const dV = last.droneV;
-  const dStat = last.droneStatus;
-
   if (dV !== null && dV !== undefined) {
     const dSoc = voltageToSOC(dV);
     if ($('droneVoltageDisplay')) $('droneVoltageDisplay').textContent = dV.toFixed(2);
@@ -1658,35 +960,25 @@ function updateGaugesAndStats() {
     if ($('dronePctStat'))        $('dronePctStat').textContent = '--';
   }
 
-  // Charging status badge
+  // Charging Badge (Strictly ESP32 CH4 F3)
   if ($('droneStatusBadge') && $('droneStatusText')) {
-    let statusKey = 0;
-    if (dStat !== null && dStat !== undefined && CHARGE_STATUS[dStat]) {
-      statusKey = dStat;
-    }
-    const s = CHARGE_STATUS[statusKey] || CHARGE_STATUS[0];
-    $('droneStatusBadge').className = 'charge-badge ' + s.cls;
-    $('droneStatusText').textContent = (dV === null || dV === undefined) ? '-- No Data --' : s.label;
+    const isCharging = commandState.droneStatus === 1;
+    $('droneStatusBadge').className = 'charge-badge ' + (isCharging ? 'charging' : 'idle');
+    $('droneStatusText').textContent = isCharging ? 'Charging' : 'Idle';
   }
 
   if (cardStates.drone.trend) {
-    const dTrend = allMergedData
-      .filter(r => r.droneV !== null && r.droneV !== undefined)
-      .slice(-60);
+    const dTrend = allMergedData.filter(r => r.droneV != null).slice(-60);
     cardStates.drone.trend.data.labels = dTrend.map(r => formatXLabel(r.t, '24H'));
     cardStates.drone.trend.data.datasets[0].data = dTrend.map(r => r.droneV);
     cardStates.drone.trend.update('none');
   }
 
-  // ---- Ultrasonic Scene - [v3] values now in METERS ----
-  const uL = last.ultraLeft;
-  const uR = last.ultraRight;
-
-  if (uL !== null && uL !== undefined && uR !== null && uR !== undefined && uL > 0 && uR > 0) {
+  // Ultrasonic
+  const uL = last.ultraLeft, uR = last.ultraRight;
+  if (uL != null && uR != null && uL > 0 && uR > 0) {
     if ($('distL')) $('distL').textContent = `L: ${uL.toFixed(2)} m`;
     if ($('distR')) $('distR').textContent = `R: ${uR.toFixed(2)} m`;
-
-    // Scale meters to a flex-friendly number so both spaces stay visible
     if ($('spaceL')) $('spaceL').style.flex = Math.max(uL * 100, 10);
     if ($('spaceR')) $('spaceR').style.flex = Math.max(uR * 100, 10);
   } else {
@@ -1696,143 +988,61 @@ function updateGaugesAndStats() {
     if ($('spaceR')) $('spaceR').style.flex = 1;
   }
 
-  // ---- Sleep ----
   if ($('sleepDisplay')) $('sleepDisplay').textContent = ((last.sleepSec ?? 0) / 60).toFixed(1);
-
-  // GPS static
-  if ($('gpsLat'))  $('gpsLat').textContent  = STATIC_LAT.toFixed(6);
-  if ($('gpsLon'))  $('gpsLon').textContent  = STATIC_LON.toFixed(6);
-
+  if ($('gpsLat')) $('gpsLat').textContent = STATIC_LAT.toFixed(6);
+  if ($('gpsLon')) $('gpsLon').textContent = STATIC_LON.toFixed(6);
   updateOrientation(last.accX ?? 0, last.accY ?? 0, last.accZ ?? 0);
 }
 
-// ============================================================
-//  SLOTH ORIENTATION (Tilt)
-// ============================================================
 function updateOrientation(ax, ay, az) {
-  const scene = document.querySelector('.ultrasonic-scene');
-  if (!scene) return;
-  const norm = Math.sqrt(ax*ax + ay*ay + az*az);
-  if (norm < 0.001) return;
-  const roll = Math.atan2(ay, az) * 180 / Math.PI;
-  const pitch = Math.atan2(-ax, Math.sqrt(ay*ay + az*az)) * 180 / Math.PI;
-  const r = Math.max(-30, Math.min(30, roll));
-  const p = Math.max(-20, Math.min(20, pitch));
-  scene.style.transform = `rotateX(${r*0.1}deg) rotateY(${p*0.1}deg)`;
+  const scene = document.querySelector('.ultrasonic-scene'); if (!scene) return;
+  const norm = Math.sqrt(ax*ax + ay*ay + az*az); if (norm < 0.001) return;
+  const roll = Math.atan2(ay, az) * 180 / Math.PI, pitch = Math.atan2(-ax, Math.sqrt(ay*ay + az*az)) * 180 / Math.PI;
+  scene.style.transform = `rotateX(${Math.max(-30, Math.min(30, roll))*0.1}deg) rotateY(${Math.max(-20, Math.min(20, pitch))*0.1}deg)`;
 }
 
-// ============================================================
-//  DATETIME
-// ============================================================
-function updateDateTime() {
-  const el = document.getElementById('datetimeDisplay');
-  if (el) el.textContent = new Date().toLocaleString('en-US',
-    { weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' });
-}
+function updateDateTime() { const el = document.getElementById('datetimeDisplay'); if (el) el.textContent = new Date().toLocaleString('en-US', { weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' }); }
 
-// ============================================================
-//  TOGGLES
-// ============================================================
 function setupToggles() {
-  const bBtn = document.getElementById('batteryToggleBtn');
-  const sBtn = document.getElementById('solarToggleBtn');
-  if (bBtn) bBtn.onclick = () => {
-    isBatteryChart = !isBatteryChart;
-    toggleView('battery', isBatteryChart);
-    if (isBatteryChart) setTimeout(updateBatteryChart, 50);
-  };
-  if (sBtn) sBtn.onclick = () => {
-    isSolarChart = !isSolarChart;
-    toggleView('solar', isSolarChart);
-    if (isSolarChart) setTimeout(updateSolarChart, 50);
-  };
+  const bBtn = document.getElementById('batteryToggleBtn'), sBtn = document.getElementById('solarToggleBtn');
+  if (bBtn) bBtn.onclick = () => { isBatteryChart = !isBatteryChart; toggleView('battery', isBatteryChart); if (isBatteryChart) setTimeout(updateBatteryChart, 50); };
+  if (sBtn) sBtn.onclick = () => { isSolarChart = !isSolarChart; toggleView('solar', isSolarChart); if (isSolarChart) setTimeout(updateSolarChart, 50); };
 }
-
-function toggleView(id, showChart) {
-  const g = document.getElementById(`${id}GaugeContainer`);
-  const c = document.getElementById(`${id}ChartContainer`);
-  const b = document.getElementById(`${id}ToggleBtn`);
-  if (!g || !c || !b) return;
-  if (showChart) { g.classList.remove('active'); c.classList.add('active'); b.textContent = 'Gauge'; }
-  else { g.classList.add('active'); c.classList.remove('active'); b.textContent = 'Chart'; }
-}
-
+function toggleView(id, showChart) { const g = document.getElementById(`${id}GaugeContainer`), c = document.getElementById(`${id}ChartContainer`), b = document.getElementById(`${id}ToggleBtn`); if (!g || !c || !b) return; if (showChart) { g.classList.remove('active'); c.classList.add('active'); b.textContent = 'Gauge'; } else { g.classList.add('active'); c.classList.remove('active'); b.textContent = 'Chart'; } }
 function setupDroneTabs() {
-  const btns = document.querySelectorAll('.drone-tab-btn');
-  btns.forEach(btn => {
-    btn.onclick = () => {
-      btns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const view = btn.dataset.view;
-
-      document.getElementById('droneGaugeContainer').classList.remove('active');
-      document.getElementById('droneChartContainer').classList.remove('active');
-      document.getElementById('droneChargeContainer').classList.remove('active');
-
-      if (view === 'gauge') {
-        document.getElementById('droneGaugeContainer').classList.add('active');
-      } else if (view === 'trend') {
-        document.getElementById('droneChartContainer').classList.add('active');
-        updateDroneChart();
-      } else if (view === 'charge') {
-        document.getElementById('droneChargeContainer').classList.add('active');
-        updateDroneChargeChart();
-      }
-    };
-  });
+  const btns = document.querySelectorAll('.drone-tab-btn'); btns.forEach(btn => { btn.onclick = () => {
+      btns.forEach(b => b.classList.remove('active')); btn.classList.add('active');
+      document.getElementById('droneGaugeContainer').classList.remove('active'); document.getElementById('droneChartContainer').classList.remove('active');
+      if (btn.dataset.view === 'gauge') document.getElementById('droneGaugeContainer').classList.add('active');
+      else { document.getElementById('droneChartContainer').classList.add('active'); updateDroneChart(); }
+  }; });
 }
 
-// ============================================================
-//  EXPORT CSV  [v3] — added droneSoC, dropped raw dronePct
-// ============================================================
 document.getElementById('exportBtn').addEventListener('click', () => {
   if (allMergedData.length === 0) return alert('No data');
-  const keys = ['shtTemp','shtHum','bmeTemp','bmeHum','bmePress','bmeGas',
-                'ccsCO2','ccsTVOC','sgpCO2','sgpTVOC',
-                'solarV','solarA','solarW','battV','battA','battW','sleepSec',
-                'droneV','droneStatus','ultraLeft','ultraRight',
-                'lux','accX','accY','accZ','gpsLat','gpsLon'];
-  const header = 'timestamp,' + keys.join(',') + ',battSoC,droneSoC,chargeCmd';
+  const keys = ['shtTemp','shtHum','bmeTemp','bmeHum','bmePress','bmeGas','ccsCO2','ccsTVOC','sgpCO2','sgpTVOC','solarV','solarA','solarW','battV','battA','battW','sleepSec','droneV','ultraLeft','ultraRight','lux','accX','accY','accZ','gpsLat','gpsLon'];
+  const header = 'timestamp,' + keys.join(',') + ',battSoC,droneSoC';
   const rows = allMergedData.map(r => {
-    const ts = r.t.toISOString();
-    const vals = keys.map(k => r[k] ?? '').join(',');
-    const battSoc  = voltageToSOC(r.battV ?? 0).toFixed(1);
-    const droneSoc = r.droneV ? voltageToSOC(r.droneV).toFixed(1) : '';
-    const chargeCmd = (r.dronePct === 1) ? 1 : 0;
-    return ts + ',' + vals + ',' + battSoc + ',' + droneSoc + ',' + chargeCmd;
+    const ts = r.t.toISOString(); const vals = keys.map(k => r[k] ?? '').join(','); const battSoc = voltageToSOC(r.battV ?? 0).toFixed(1); const droneSoc = r.droneV != null ? voltageToSOC(r.droneV).toFixed(1) : '';
+    return ts + ',' + vals + ',' + battSoc + ',' + droneSoc;
   });
-  const csv = [header, ...rows].join('\n');
-  const blob = new Blob([csv], { type:'text/csv' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = `slothbot_${new Date().toISOString().slice(0,10)}.csv`;
-  document.body.appendChild(link); link.click(); document.body.removeChild(link);
-  URL.revokeObjectURL(link.href);
+  const cmdSummary = `# Latest Commands: manualMode=${commandState.manualMode}, chargeCmd=${commandState.chargeCmd}, droneStatus=${commandState.droneStatus}, motorCmd=${commandState.motorCmd}, surveillance=${commandState.surveillance}, dronePower=${commandState.dronePower}`;
+  const csv = [header, ...rows, cmdSummary].join('\n'); const blob = new Blob([csv], { type:'text/csv' });
+  const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `slothbot_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href);
 });
 
-// ============================================================
-//  INIT
-// ============================================================
-document.getElementById('refreshBtn').addEventListener('click', fetchChannels);
+document.getElementById('refreshBtn').addEventListener('click', () => { if (motorPushTimer) clearTimeout(motorPushTimer); motorPushTimer = null; fetchChannels(); });
 
-window.addEventListener('load', () => {
-  initGlobalRangeBar();
-  applyChannelWarnings();
-  fetchChannels();
-  setInterval(updateDateTime, 1000);
-});
+window.addEventListener('load', () => { initGlobalRangeBar(); applyChannelWarnings(); fetchChannels(); setInterval(updateDateTime, 1000); });
 
 let resizeTimer;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
     ['temperature','humidity','pressure','gas','eco2','tvoc','acc','light','sleep'].forEach(updateCardChart);
-    if (isBatteryChart) updateBatteryChart();
-    if (isSolarChart) updateSolarChart();
-
-    const activeTab = document.querySelector('.drone-tab-btn.active');
-    if (activeTab && activeTab.dataset.view === 'trend') updateDroneChart();
-    if (activeTab && activeTab.dataset.view === 'charge') updateDroneChargeChart();
+    if (isBatteryChart) updateBatteryChart(); if (isSolarChart) updateSolarChart();
+    const activeTab = document.querySelector('.drone-tab-btn.active'); if (activeTab && activeTab.dataset.view === 'trend') updateDroneChart();
   }, 250);
 });
 </script>
