@@ -433,15 +433,16 @@
         </div>
         <div style="font-size:10px; color:#64748b; margin-top:5px;">Drone Power Relay</div>
 
-        <div class="toggle-container" style="margin-top:8px;">
+        <!-- Surveillance Toggle (Read-Only) -->
+        <div class="toggle-container" style="margin-top:8px; opacity: 0.5;">
           <span class="toggle-label">OFF</span>
           <label class="switch">
-            <input type="checkbox" id="surveillanceToggle" onchange="onToggleChange('surveillanceToggle')">
+            <input type="checkbox" id="surveillanceToggle" disabled>
             <span class="slider"></span>
           </label>
           <span class="toggle-label">ON</span>
         </div>
-        <div style="font-size:10px; color:#64748b; margin-top:5px;">📸 Surveillance</div>
+        <div style="font-size:10px; color:#64748b; margin-top:5px;">📸 Surveillance (Read-Only)</div>
 
         <div class="toggle-container" style="margin-top:8px;">
           <span class="toggle-label">OFF</span>
@@ -536,17 +537,17 @@ function showToast(msg, isError) {
 
 function updateLocalState() {
   pendingSleep  = document.getElementById('manualModeToggle').checked  ? 1 : 0;
-  pendingSurv   = document.getElementById('surveillanceToggle').checked ? 1 : 0;
   pendingPower  = document.getElementById('dronePowerToggle').checked   ? 1 : 0;
   pendingCharge = document.getElementById('manualChargeToggle').checked ? 1 : 0;
+  // pendingSurv is no longer updated because the toggle is disabled
 }
 
 function syncManualModeUI() {
   const isManual = commandState.manualMode === 1;
   document.querySelectorAll('.motor-btn').forEach(b => { b.classList.toggle('disabled', !isManual); b.disabled = !isManual; });
   document.getElementById('dronePowerToggle').disabled = !isManual;
-  document.getElementById('surveillanceToggle').disabled = !isManual;
   document.getElementById('manualChargeToggle').disabled = !isManual;
+  // Surveillance toggle is permanently disabled in HTML
 }
 
 async function pushSingleField(writeKey, fieldNum, value) {
@@ -592,7 +593,13 @@ async function onToggleChange(toggleId) {
     document.getElementById(toggleId).checked = !document.getElementById(toggleId).checked;
     updateLocalState(); return;
   }
-  const map = { 'dronePowerToggle': [CH4.writeKey, 6, pendingPower], 'surveillanceToggle': [CH4.writeKey, 5, pendingSurv], 'manualChargeToggle': [CH4.writeKey, 2, pendingCharge] };
+  
+  // REMOVED surveillanceToggle from map
+  const map = { 
+    'dronePowerToggle': [CH4.writeKey, 6, pendingPower], 
+    'manualChargeToggle': [CH4.writeKey, 2, pendingCharge] 
+  };
+  
   const [key, field, val] = map[toggleId];
   const ok = await pushSingleField(key, field, val);
   if (ok) showToast(`${toggleId.replace('Toggle','')} → ${val ? 'ON' : 'OFF'}`);
@@ -605,10 +612,11 @@ async function pushCommands() {
   try {
     const fields4 = [];
     if (pendingSleep === 1) { 
-      fields4.push(`field4=${pendingMotor}`, `field5=${pendingSurv}`, `field6=${pendingPower}`, `field2=${pendingCharge}`); 
+      // REMOVED field5 from push
+      fields4.push(`field4=${pendingMotor}`, `field6=${pendingPower}`, `field2=${pendingCharge}`); 
     } else { 
-      // FIXED: Do NOT send field2=0. Leave F2 (charging) alone!
-      fields4.push(`field4=7`, `field5=0`, `field6=0`); 
+      // REMOVED field5 from push
+      fields4.push(`field4=7`, `field6=0`); 
     }
     const url4 = `https://api.thingspeak.com/update?api_key=${CH4.writeKey}&` + fields4.join('&');
     const url2 = `https://api.thingspeak.com/update?api_key=${CH2.writeKey}&field8=${pendingSleep}`;
@@ -627,11 +635,14 @@ async function pushCommands() {
 
 function syncUIState() {
   document.getElementById('manualModeToggle').checked  = commandState.manualMode === 1;
-  document.getElementById('surveillanceToggle').checked = commandState.surveillance === 1;
+  document.getElementById('surveillanceToggle').checked = commandState.surveillance === 1; // Still reads it
   document.getElementById('dronePowerToggle').checked   = commandState.dronePower === 1;
   document.getElementById('manualChargeToggle').checked = commandState.chargeCmd === 1;
-  pendingSleep = commandState.manualMode === 1 ? 1 : 0; pendingSurv = commandState.surveillance === 1 ? 1 : 0;
-  pendingPower = commandState.dronePower === 1 ? 1 : 0; pendingCharge = commandState.chargeCmd === 1 ? 1 : 0;
+  
+  pendingSleep = commandState.manualMode === 1 ? 1 : 0; 
+  pendingSurv = commandState.surveillance === 1 ? 1 : 0;
+  pendingPower = commandState.dronePower === 1 ? 1 : 0; 
+  pendingCharge = commandState.chargeCmd === 1 ? 1 : 0;
   
   // Motor sync logic
   if (commandState.motorCmd) {
@@ -966,7 +977,7 @@ function updateGaugesAndStats() {
     if ($('dronePctStat'))        $('dronePctStat').textContent = '--';
   }
 
-  // Charging Badge (Strictly ESP32 CH4 F3)
+  // Charging Badge
   if ($('droneStatusBadge') && $('droneStatusText')) {
     const isCharging = commandState.droneStatus === 1;
     $('droneStatusBadge').className = 'charge-badge ' + (isCharging ? 'charging' : 'idle');
