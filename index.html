@@ -295,6 +295,7 @@
   input:checked + .slider { background-color: #22c55e; }
   input:checked + .slider:before { transform: translateX(24px); }
 
+  /* Photo Gallery */
   .photo-grid {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 16px; margin-top: 10px;
@@ -304,8 +305,23 @@
     overflow: hidden; position: relative; aspect-ratio: 4/3;
     display: flex; align-items: center; justify-content: center;
     color: #475569; font-size: 12px; flex-direction: column; gap: 8px;
+    cursor: pointer; /* Indicates it can be clicked */
   }
-  .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.2s; }
+  .photo-item:hover img { transform: scale(1.05); } /* Hover effect for zoom hint */
+
+  /* Lightbox Modal */
+  #lightbox {
+    display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.85); z-index: 10000;
+    justify-content: center; align-items: center; cursor: zoom-out;
+  }
+  #lightbox img {
+    max-width: 95%; max-height: 95%; object-fit: contain;
+    border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    animation: zoomIn 0.2s ease-out;
+  }
+  @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
   #toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
@@ -444,6 +460,7 @@
         </div>
         <div style="font-size:10px; color:#64748b; margin-top:5px;">📸 Surveillance (Read-Only)</div>
 
+        <!-- Manual Charging Toggle (Always Enabled) -->
         <div class="toggle-container" style="margin-top:8px;">
           <span class="toggle-label">OFF</span>
           <label class="switch">
@@ -471,16 +488,19 @@
     </div>
   </div>
 
+  <!-- DRONE PHOTOS SECTION -->
   <div class="card full-width" style="margin-top:20px;">
     <h3>📸 Drone Surveillance Photos <span id="warnPhotos"></span></h3>
-    <div class="sub">Images captured during surveillance missions</div>
+    <div class="sub">Images loaded from <code>drone_img/</code> folder. Click to zoom.</div>
     <div class="photo-grid" id="photoGrid">
-      <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
-      <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
-      <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
-      <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
+      <!-- Images will be loaded here dynamically -->
     </div>
   </div>
+</div>
+
+<!-- Lightbox Overlay -->
+<div id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="Zoomed Photo">
 </div>
 
 <div id="toast"></div>
@@ -539,15 +559,12 @@ function updateLocalState() {
   pendingSleep  = document.getElementById('manualModeToggle').checked  ? 1 : 0;
   pendingPower  = document.getElementById('dronePowerToggle').checked   ? 1 : 0;
   pendingCharge = document.getElementById('manualChargeToggle').checked ? 1 : 0;
-  // pendingSurv is no longer updated because the toggle is disabled
 }
 
 function syncManualModeUI() {
   const isManual = commandState.manualMode === 1;
   document.querySelectorAll('.motor-btn').forEach(b => { b.classList.toggle('disabled', !isManual); b.disabled = !isManual; });
   document.getElementById('dronePowerToggle').disabled = !isManual;
-  document.getElementById('manualChargeToggle').disabled = !isManual;
-  // Surveillance toggle is permanently disabled in HTML
 }
 
 async function pushSingleField(writeKey, fieldNum, value) {
@@ -581,6 +598,7 @@ function setMotorState(cmd, fromSync = false) {
 
 async function onToggleChange(toggleId) {
   updateLocalState();
+
   if (toggleId === 'manualModeToggle') {
     const ok = await pushSingleField(CH2.writeKey, 8, pendingSleep);
     commandState.manualMode = pendingSleep;
@@ -588,21 +606,22 @@ async function onToggleChange(toggleId) {
     showToast(pendingSleep ? 'Manual Mode ON' : 'Manual Mode OFF');
     return;
   }
+
+  if (toggleId === 'manualChargeToggle') {
+    const ok = await pushSingleField(CH4.writeKey, 2, pendingCharge);
+    if (ok) showToast(`Charging → ${pendingCharge ? 'ON' : 'OFF'}`);
+    else showToast('Push failed.', true);
+    return;
+  }
+
   if (commandState.manualMode !== 1) {
     showToast('Enable Manual Mode first.', true);
     document.getElementById(toggleId).checked = !document.getElementById(toggleId).checked;
     updateLocalState(); return;
   }
   
-  // REMOVED surveillanceToggle from map
-  const map = { 
-    'dronePowerToggle': [CH4.writeKey, 6, pendingPower], 
-    'manualChargeToggle': [CH4.writeKey, 2, pendingCharge] 
-  };
-  
-  const [key, field, val] = map[toggleId];
-  const ok = await pushSingleField(key, field, val);
-  if (ok) showToast(`${toggleId.replace('Toggle','')} → ${val ? 'ON' : 'OFF'}`);
+  const ok = await pushSingleField(CH4.writeKey, 6, pendingPower);
+  if (ok) showToast(`Drone Power → ${pendingPower ? 'ON' : 'OFF'}`);
   else showToast('Push failed.', true);
 }
 
@@ -612,11 +631,9 @@ async function pushCommands() {
   try {
     const fields4 = [];
     if (pendingSleep === 1) { 
-      // REMOVED field5 from push
       fields4.push(`field4=${pendingMotor}`, `field6=${pendingPower}`, `field2=${pendingCharge}`); 
     } else { 
-      // REMOVED field5 from push
-      fields4.push(`field4=7`, `field6=0`); 
+      fields4.push(`field4=7`, `field6=0`, `field2=${pendingCharge}`); 
     }
     const url4 = `https://api.thingspeak.com/update?api_key=${CH4.writeKey}&` + fields4.join('&');
     const url2 = `https://api.thingspeak.com/update?api_key=${CH2.writeKey}&field8=${pendingSleep}`;
@@ -635,7 +652,7 @@ async function pushCommands() {
 
 function syncUIState() {
   document.getElementById('manualModeToggle').checked  = commandState.manualMode === 1;
-  document.getElementById('surveillanceToggle').checked = commandState.surveillance === 1; // Still reads it
+  document.getElementById('surveillanceToggle').checked = commandState.surveillance === 1;
   document.getElementById('dronePowerToggle').checked   = commandState.dronePower === 1;
   document.getElementById('manualChargeToggle').checked = commandState.chargeCmd === 1;
   
@@ -644,7 +661,6 @@ function syncUIState() {
   pendingPower = commandState.dronePower === 1 ? 1 : 0; 
   pendingCharge = commandState.chargeCmd === 1 ? 1 : 0;
   
-  // Motor sync logic
   if (commandState.motorCmd) {
     if (commandState.motorCmd === 5 || commandState.motorCmd === 7 || commandState.motorCmd === 9) {
       setMotorState(commandState.motorCmd, true);
@@ -671,7 +687,11 @@ function formatXLabel(date, range) {
   return d.toLocaleString('en-US', { month: 'short', year: '2-digit' });
 }
 function formatFullTimestamp(date) { return new Date(date).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }); }
-function computeChartWidth(numPoints, containerWidth) { return Math.min(1800, Math.max(Math.max(containerWidth || 400, 400), numPoints * 14)); }
+
+function computeChartWidth(numPoints, containerWidth) {
+  if (numPoints <= 20) return Math.max(containerWidth || 400, 400);
+  return Math.max(containerWidth || 400, numPoints * 8); 
+}
 
 function renderScrollableChart(canvas, wrapper, labels, datasets, yMin, yMax, rawDates) {
   wrapper.style.width = computeChartWidth(labels.length, wrapper.parentElement.clientWidth) + 'px';
@@ -743,7 +763,7 @@ async function fetchChannels() {
     commandState.manualMode   = latestNonNull(feeds2, 'field8', parseInt) ?? 0;
     commandState.chargeCmd    = latestNonNull(feeds4, 'field2', parseInt) ?? 0;
     commandState.droneStatus  = latestNonNull(feeds4, 'field3', parseInt) ?? 0;
-    commandState.motorCmd     = latestNonNull(feeds4, 'field4', v => parseInt(v)) || 7; // Default to 7 (Stop)
+    commandState.motorCmd     = latestNonNull(feeds4, 'field4', v => parseInt(v)) || 7;
     commandState.surveillance = latestNonNull(feeds4, 'field5', parseInt) ?? 0;
     commandState.dronePower   = latestNonNull(feeds4, 'field6', parseInt) ?? 0;
 
@@ -781,7 +801,8 @@ async function fetchChannels() {
 
 function mergeN(arrays) {
   const combined = [].concat(...arrays).sort((x,y) => x.t.getTime() - y.t.getTime());
-  const res = []; const tol = 15 * 60 * 1000;
+  const res = []; 
+  const tol = 10000; 
   for (const row of combined) {
     if (res.length === 0) { res.push({...row}); continue; }
     const last = res[res.length-1];
@@ -830,7 +851,61 @@ function getCHWarning(ch, type) {
   return isMissing ? '<span class="ch-warn">⚠️ CH4 Not Configured</span>' : '';
 }
 function applyChannelWarnings() { if (document.getElementById('warnManual')) document.getElementById('warnManual').innerHTML = getCHWarning(4, 'write'); if (document.getElementById('warnUltrasonic')) document.getElementById('warnUltrasonic').innerHTML = getCHWarning(4, 'read'); if (document.getElementById('warnPhotos')) document.getElementById('warnPhotos').innerHTML = getCHWarning(4, 'read'); }
-function updatePhotoGallery() { const grid = document.getElementById('photoGrid'); if (!grid) return; grid.innerHTML = `<div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div><div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div><div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div><div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>`; }
+
+// UPDATED: Dynamically load images and attach Lightbox click event
+function updatePhotoGallery() {
+  const grid = document.getElementById('photoGrid');
+  if (!grid) return;
+  
+  grid.innerHTML = '';
+  const maxImagesToTry = 12; 
+  let foundAny = false;
+
+  for (let i = 1; i <= maxImagesToTry; i++) {
+    const imgSrc = `drone_img/${i}.jpg`; // Change to .png if your images are png
+    
+    const div = document.createElement('div');
+    div.className = 'photo-item';
+    div.style.display = 'none'; 
+    
+    const img = document.createElement('img');
+    img.src = imgSrc;
+    img.alt = `Drone Photo ${i}`;
+    
+    // Show image if it loads
+    img.onload = () => {
+      div.style.display = 'flex'; 
+      div.innerHTML = '';
+      div.appendChild(img);
+      foundAny = true;
+    };
+
+    // Add Lightbox click event
+    div.onclick = () => {
+      document.getElementById('lightbox-img').src = imgSrc;
+      document.getElementById('lightbox').style.display = 'flex';
+    };
+    
+    div.appendChild(img);
+    grid.appendChild(div);
+  }
+  
+  setTimeout(() => {
+    if (!foundAny) {
+      grid.innerHTML = `
+        <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
+        <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
+        <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
+        <div class="photo-item"><span>📷</span><span>Awaiting Photo</span></div>
+      `;
+    }
+  }, 1000);
+}
+
+// Close Lightbox function
+function closeLightbox() {
+  document.getElementById('lightbox').style.display = 'none';
+}
 
 function updateEnvCard(cardKey) {
   const group = GROUPS.find(g => g.key === cardKey), state = cardStates[cardKey];
