@@ -52,6 +52,8 @@
     transition: 0.15s;
   }
   .btn:hover{background:#334155; color:#fff;}
+  .btn-admin { background: #6366f1; color: #fff; border-color: #6366f1; }
+  .btn-admin:hover { background: #4f46e5; }
 
   .global-range-bar {
     display: flex; align-items: center; gap: 14px;
@@ -257,6 +259,11 @@
   .leaflet-control-attribution a { color: #60a5fa !important; text-decoration: none; }
   .leaflet-control-attribution a:hover { text-decoration: underline; }
 
+  /* Hidden by default */
+  #adminPanel {
+    display: none;
+  }
+
   .control-panel {
     display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;
     background: #0f172a; border-radius: 8px; padding: 16px; border: 1px solid #2d3a4f;
@@ -305,10 +312,10 @@
     overflow: hidden; position: relative; aspect-ratio: 4/3;
     display: flex; align-items: center; justify-content: center;
     color: #475569; font-size: 12px; flex-direction: column; gap: 8px;
-    cursor: pointer; /* Indicates it can be clicked */
+    cursor: pointer;
   }
   .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.2s; }
-  .photo-item:hover img { transform: scale(1.05); } /* Hover effect for zoom hint */
+  .photo-item:hover img { transform: scale(1.05); }
 
   /* Lightbox Modal */
   #lightbox {
@@ -346,6 +353,7 @@
     <div class="toolbar">
       <button class="btn" id="refreshBtn">⟳ Refresh</button>
       <button class="btn" id="exportBtn">⬇ Export CSV</button>
+      <button class="btn btn-admin" id="adminBtn" onclick="toggleAdminPanel()">🔒 Admin Login</button>
       <span class="datetime" id="datetimeDisplay"></span>
       <span class="last-updated" id="lastUpdatedDisplay">Last Update: --:--:--</span>
       <span class="sleep-display">😴 Sleep <strong id="sleepDisplay">0.0</strong> min</span>
@@ -410,7 +418,8 @@
     </div>
   </div>
 
-  <div class="card full-width" style="margin-top:20px;">
+  <!-- ADMIN PANEL (Hidden by default) -->
+  <div class="card full-width" id="adminPanel" style="margin-top:20px;">
     <h3>🎮 Manual Control &amp; Commands <span id="warnManual"></span></h3>
     <div class="sub">Commands push immediately when Manual Mode is active.</div>
 
@@ -516,6 +525,11 @@ const STATIC_LAT = 43.47043572;
 const STATIC_LON = -80.54280196;
 const STATIC_ZOOM = 15;
 
+// Admin credentials
+const ADMIN_USER = "Admin";
+const ADMIN_PASS = "ERABL@UW2026";
+let isAdmin = false;
+
 const GROUPS = [
   { key: 'temperature', name: 'Temperature', unit: '°C', datasets: [{ key: 'shtTemp', label: 'SHT31', color: '#4ade80' }, { key: 'bmeTemp', label: 'BME680', color: '#fb923c' }] },
   { key: 'humidity', name: 'Humidity', unit: '%', datasets: [{ key: 'shtHum', label: 'SHT31', color: '#60a5fa' }, { key: 'bmeHum', label: 'BME680', color: '#f472b6' }] },
@@ -553,6 +567,34 @@ function showToast(msg, isError) {
   el.textContent = msg; el.style.borderColor = isError ? '#ef4444' : '#3b82f6';
   el.classList.add('show'); if (toastTimer) clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// Admin Authentication
+function toggleAdminPanel() {
+  if (isAdmin) {
+    isAdmin = false;
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('adminBtn').textContent = '🔒 Admin Login';
+    document.getElementById('adminBtn').classList.remove('btn-admin');
+    document.getElementById('adminBtn').classList.add('btn');
+    showToast('Logged out.');
+  } else {
+    const user = prompt("Enter Admin Username:");
+    if (user === null) return;
+    const pass = prompt("Enter Admin Password:");
+    if (pass === null) return;
+    
+    if (user === ADMIN_USER && pass === ADMIN_PASS) {
+      isAdmin = true;
+      document.getElementById('adminPanel').style.display = 'block';
+      document.getElementById('adminBtn').textContent = '🔓 Logout';
+      document.getElementById('adminBtn').classList.remove('btn');
+      document.getElementById('adminBtn').classList.add('btn-admin');
+      showToast('Admin Access Granted.');
+    } else {
+      showToast('Invalid Credentials.', true);
+    }
+  }
 }
 
 function updateLocalState() {
@@ -651,6 +693,9 @@ async function pushCommands() {
 }
 
 function syncUIState() {
+  // Only update if Admin Panel is visible
+  if (!isAdmin) return;
+
   document.getElementById('manualModeToggle').checked  = commandState.manualMode === 1;
   document.getElementById('surveillanceToggle').checked = commandState.surveillance === 1;
   document.getElementById('dronePowerToggle').checked   = commandState.dronePower === 1;
@@ -690,7 +735,8 @@ function formatFullTimestamp(date) { return new Date(date).toLocaleString('en-US
 
 function computeChartWidth(numPoints, containerWidth) {
   if (numPoints <= 20) return Math.max(containerWidth || 400, 400);
-  return Math.max(containerWidth || 400, numPoints * 8); 
+  // Cap the max width at 2500px so it doesn't crash on massive datasets
+  return Math.min(2500, Math.max(containerWidth || 400, numPoints * 8)); 
 }
 
 function renderScrollableChart(canvas, wrapper, labels, datasets, yMin, yMax, rawDates) {
@@ -745,6 +791,32 @@ function voltageToSOC(v) {
 function latestNonNull(feeds, fieldName, parser) {
   for (let i = feeds.length - 1; i >= 0; i--) { const v = feeds[i][fieldName]; if (v !== undefined && v !== null && v !== '') return parser ? parser(v) : v; }
   return null;
+}
+
+// DOWNSAMPLING FUNCTION FOR LARGE DATASETS
+function downsampleData(data, maxPoints) {
+  if (data.length <= maxPoints) return data;
+  const step = Math.ceil(data.length / maxPoints);
+  const result = [];
+  for (let i = 0; i < data.length; i += step) {
+    let chunk = data.slice(i, i + step);
+    let avg = {};
+    
+    // Average the numerical properties
+    const keys = ['shtTemp','shtHum','bmeTemp','bmeHum','bmePress','bmeGas','ccsCO2','ccsTVOC',
+                  'solarV','solarA','solarW','battV','battA','battW','droneV','ultraLeft','ultraRight','lux',
+                  'accX','accY','accZ','sleepSec'];
+                  
+    keys.forEach(k => {
+      let sum = 0, count = 0;
+      chunk.forEach(r => { if (r[k] != null) { sum += r[k]; count++; } });
+      avg[k] = count > 0 ? sum / count : null;
+    });
+    
+    avg.t = chunk[0].t; // Keep the first timestamp of the chunk
+    result.push(avg);
+  }
+  return result;
 }
 
 async function fetchChannels() {
@@ -852,7 +924,6 @@ function getCHWarning(ch, type) {
 }
 function applyChannelWarnings() { if (document.getElementById('warnManual')) document.getElementById('warnManual').innerHTML = getCHWarning(4, 'write'); if (document.getElementById('warnUltrasonic')) document.getElementById('warnUltrasonic').innerHTML = getCHWarning(4, 'read'); if (document.getElementById('warnPhotos')) document.getElementById('warnPhotos').innerHTML = getCHWarning(4, 'read'); }
 
-// UPDATED: Dynamically load images and attach Lightbox click event
 function updatePhotoGallery() {
   const grid = document.getElementById('photoGrid');
   if (!grid) return;
@@ -862,8 +933,7 @@ function updatePhotoGallery() {
   let foundAny = false;
 
   for (let i = 1; i <= maxImagesToTry; i++) {
-    const imgSrc = `drone_img/${i}.jpg`; // Change to .png if your images are png
-    
+    const imgSrc = `drone_img/${i}.jpg`; 
     const div = document.createElement('div');
     div.className = 'photo-item';
     div.style.display = 'none'; 
@@ -872,7 +942,6 @@ function updatePhotoGallery() {
     img.src = imgSrc;
     img.alt = `Drone Photo ${i}`;
     
-    // Show image if it loads
     img.onload = () => {
       div.style.display = 'flex'; 
       div.innerHTML = '';
@@ -880,7 +949,6 @@ function updatePhotoGallery() {
       foundAny = true;
     };
 
-    // Add Lightbox click event
     div.onclick = () => {
       document.getElementById('lightbox-img').src = imgSrc;
       document.getElementById('lightbox').style.display = 'flex';
@@ -902,14 +970,19 @@ function updatePhotoGallery() {
   }, 1000);
 }
 
-// Close Lightbox function
 function closeLightbox() {
   document.getElementById('lightbox').style.display = 'none';
 }
 
 function updateEnvCard(cardKey) {
   const group = GROUPS.find(g => g.key === cardKey), state = cardStates[cardKey];
-  const data = filterByRange(allMergedData, state.range);
+  let data = filterByRange(allMergedData, state.range);
+  
+  // Downsample if too many points
+  if (state.range !== '24H' && state.range !== '7D') {
+     data = downsampleData(data, 400);
+  }
+  
   const wrapper = document.getElementById(`wrapper-${cardKey}`), canvas = document.getElementById(`chart-${cardKey}`);
   if (!wrapper || !canvas) return;
   const datasets = group.datasets.map(ds => ({ label: ds.label, data: data.map(r => (r[ds.key] !== null && Number.isFinite(r[ds.key])) ? r[ds.key] : null), borderColor: ds.color, backgroundColor: ds.color + '33', borderWidth: 2, pointRadius: 2, tension: 0.2, spanGaps: true }));
@@ -927,7 +1000,10 @@ function createBatteryCard() {
 }
 function createBatteryGaugeAndTrend() { cardStates.battery.gauge = createGreenGauge(document.getElementById('batteryGaugeCanvas').getContext('2d')); cardStates.battery.trend = createTrendChart(document.getElementById('batteryTrendChart').getContext('2d'), '#22c55e'); }
 function updateBatteryChart() {
-  const state = cardStates.battery, data = filterByRange(allMergedData, state.range);
+  const state = cardStates.battery;
+  let data = filterByRange(allMergedData, state.range);
+  if (state.range !== '24H' && state.range !== '7D') { data = downsampleData(data, 400); }
+
   const wrapper = document.getElementById('batteryWrapper'), canvas = document.getElementById('batteryLineChart'); if (!wrapper || !canvas) return;
   const datasets = [{ label:'Voltage (V)', data: data.map(r => r.battV ?? null), borderColor:'#3b82f6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }, { label:'Current (A)', data: data.map(r => r.battA ?? null), borderColor:'#8b5cf6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }, { label:'Power (W)', data: data.map(r => r.battW ?? null), borderColor:'#ec4899', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }, { label:'SoC (%)', data: data.map(r => r.battV != null ? voltageToSOC(r.battV) : null), borderColor:'#14b8a6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }];
   if (state.chart) state.chart.destroy(); state.chart = renderScrollableChart(canvas, wrapper, data.map(r => formatXLabel(r.t, state.range)), datasets, 0, undefined, data.map(r => r.t));
@@ -940,7 +1016,10 @@ function createSolarCard() {
 }
 function createSolarGaugeAndTrend() { cardStates.solar.gauge = createStandardGauge(document.getElementById('solarGaugeCanvas').getContext('2d')); cardStates.solar.trend = createTrendChart(document.getElementById('solarTrendChart').getContext('2d'), '#f59e0b'); }
 function updateSolarChart() {
-  const state = cardStates.solar, data = filterByRange(allMergedData, state.range);
+  const state = cardStates.solar;
+  let data = filterByRange(allMergedData, state.range);
+  if (state.range !== '24H' && state.range !== '7D') { data = downsampleData(data, 400); }
+
   const wrapper = document.getElementById('solarWrapper'), canvas = document.getElementById('solarLineChart'); if (!wrapper || !canvas) return;
   const datasets = [{ label:'Voltage (V)', data: data.map(r => r.solarV ?? null), borderColor:'#f59e0b', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }, { label:'Current (A)', data: data.map(r => r.solarA ?? null), borderColor:'#f97316', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }, { label:'Power (W)', data: data.map(r => r.solarW ?? null), borderColor:'#ef4444', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }];
   if (state.chart) state.chart.destroy(); state.chart = renderScrollableChart(canvas, wrapper, data.map(r => formatXLabel(r.t, state.range)), datasets, 0, undefined, data.map(r => r.t));
@@ -953,26 +1032,38 @@ function createDroneCard() {
 }
 function createDroneGaugeAndTrend() { cardStates.drone.gauge = createGreenGauge(document.getElementById('droneGaugeCanvas').getContext('2d')); cardStates.drone.trend = createTrendChart(document.getElementById('droneTrendChart').getContext('2d'), '#a78bfa'); }
 function updateDroneChart() {
-  const state = cardStates.drone, data = filterByRange(allMergedData, state.range);
+  const state = cardStates.drone;
+  let data = filterByRange(allMergedData, state.range);
+  if (state.range !== '24H' && state.range !== '7D') { data = downsampleData(data, 400); }
+
   const wrapper = document.getElementById('droneWrapper'), canvas = document.getElementById('droneLineChart'); if (!wrapper || !canvas) return;
   const datasets = [{ label:'Voltage (V)', data: data.map(r => r.droneV ?? null), borderColor:'#a78bfa', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }, { label:'SoC (%)', data: data.map(r => r.droneV != null ? voltageToSOC(r.droneV) : null), borderColor:'#14b8a6', borderWidth:2, pointRadius:2, tension:0.2, spanGaps:true }];
   if (state.chart) state.chart.destroy(); state.chart = renderScrollableChart(canvas, wrapper, data.map(r => formatXLabel(r.t, state.range)), datasets, 0, undefined, data.map(r => r.t));
 }
 
 function updateAccChart() {
-  const state = cardStates.acc, data = filterByRange(allMergedData, state.range);
+  const state = cardStates.acc;
+  let data = filterByRange(allMergedData, state.range);
+  if (state.range !== '24H' && state.range !== '7D') { data = downsampleData(data, 400); }
+
   const wrapper = document.getElementById('accWrapper'), canvas = document.getElementById('accChart'); if (!wrapper || !canvas) return;
   const datasets = ['accX','accY','accZ'].map((key,i) => ({ label: key.replace('acc',''), data: data.map(r => r[key] ?? null), borderColor: ['#4ade80','#60a5fa','#fb923c'][i], borderWidth: 2, pointRadius: 2, tension: 0.2, spanGaps: true }));
   if (state.chart) state.chart.destroy(); state.chart = renderScrollableChart(canvas, wrapper, data.map(r => formatXLabel(r.t, state.range)), datasets, -20, 20, data.map(r => r.t));
 }
 function updateLightChart() {
-  const state = cardStates.light, data = filterByRange(allMergedData, state.range);
+  const state = cardStates.light;
+  let data = filterByRange(allMergedData, state.range);
+  if (state.range !== '24H' && state.range !== '7D') { data = downsampleData(data, 400); }
+
   const wrapper = document.getElementById('lightWrapper'), canvas = document.getElementById('lightChart'); if (!wrapper || !canvas) return;
   const datasets = [{ label: 'Lux', data: data.map(r => r.lux ?? null), borderColor: '#facc15', backgroundColor: '#facc1533', borderWidth: 2, pointRadius: 2, tension: 0.2, spanGaps: true, fill: true }];
   if (state.chart) state.chart.destroy(); state.chart = renderScrollableChart(canvas, wrapper, data.map(r => formatXLabel(r.t, state.range)), datasets, 0, undefined, data.map(r => r.t));
 }
 function updateSleepChart() {
-  const state = cardStates.sleep, data = filterByRange(allMergedData, state.range);
+  const state = cardStates.sleep;
+  let data = filterByRange(allMergedData, state.range);
+  if (state.range !== '24H' && state.range !== '7D') { data = downsampleData(data, 400); }
+
   const wrapper = document.getElementById('sleepWrapper'), canvas = document.getElementById('sleepChart'); if (!wrapper || !canvas) return;
   const datasets = [{ label: 'Sleep (min)', data: data.map(r => (r.sleepSec != null && Number.isFinite(r.sleepSec)) ? r.sleepSec/60 : null), borderColor: '#6366f1', backgroundColor: '#6366f133', borderWidth: 2, pointRadius: 2, tension: 0.2, spanGaps: true, fill: true }];
   if (state.chart) state.chart.destroy(); state.chart = renderScrollableChart(canvas, wrapper, data.map(r => formatXLabel(r.t, state.range)), datasets, 0, undefined, data.map(r => r.t));
