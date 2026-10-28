@@ -111,7 +111,7 @@
 
   .card{
     background:#1e293b; border-radius:12px; padding:16px;
-    border:1px solid #2d3a4f; display:flex; flex-direction:column; min-width: 0;
+    border: 1px solid #2d3a4f; display:flex; flex-direction:column; min-width: 0;
     position: relative;
   }
   .card h3{ font-size:15px; font-weight:600; color:#f1f5f9; margin-bottom:2px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
@@ -330,6 +330,33 @@
   }
   @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
+  /* Login Modal */
+  #loginModal {
+    display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.75); z-index: 10001;
+    justify-content: center; align-items: center;
+  }
+  .login-box {
+    background: #1e293b; padding: 24px; border-radius: 12px;
+    border: 1px solid #334155; width: 320px; text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .login-box h2 { font-size: 18px; color: #f1f5f9; margin-bottom: 16px; }
+  .login-box input {
+    width: 100%; padding: 10px; margin-bottom: 12px;
+    background: #0b1120; border: 1px solid #475569; border-radius: 6px;
+    color: #f1f5f9; outline: none;
+  }
+  .login-box input:focus { border-color: #3b82f6; }
+  .login-box button {
+    width: 100%; padding: 10px; margin-top: 5px;
+    background: #3b82f6; color: #fff; border: none; border-radius: 6px;
+    cursor: pointer; font-weight: bold; transition: 0.2s;
+  }
+  .login-box button:hover { background: #2563eb; }
+  .login-box .cancel-btn { background: transparent; color: #94a3b8; margin-top: 10px; }
+  .login-box .cancel-btn:hover { background: #334155; color: #fff; }
+
   #toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
     background: #1e293b; color: #f1f5f9; padding: 10px 22px;
@@ -353,7 +380,7 @@
     <div class="toolbar">
       <button class="btn" id="refreshBtn">⟳ Refresh</button>
       <button class="btn" id="exportBtn">⬇ Export CSV</button>
-      <button class="btn btn-admin" id="adminBtn" onclick="toggleAdminPanel()">🔒 Admin Login</button>
+      <button class="btn btn-admin" id="adminBtn" onclick="openLoginModal()">🔒 Admin Login</button>
       <span class="datetime" id="datetimeDisplay"></span>
       <span class="last-updated" id="lastUpdatedDisplay">Last Update: --:--:--</span>
       <span class="sleep-display">😴 Sleep <strong id="sleepDisplay">0.0</strong> min</span>
@@ -512,6 +539,17 @@
   <img id="lightbox-img" src="" alt="Zoomed Photo">
 </div>
 
+<!-- Custom Login Modal -->
+<div id="loginModal">
+  <div class="login-box">
+    <h2>🔐 Admin Login</h2>
+    <input type="text" id="adminUser" placeholder="Username" autocomplete="off">
+    <input type="password" id="adminPass" placeholder="Password">
+    <button onclick="submitLogin()">Login</button>
+    <button class="cancel-btn" onclick="closeLoginModal()">Cancel</button>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -569,9 +607,10 @@ function showToast(msg, isError) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
 }
 
-// Admin Authentication
-function toggleAdminPanel() {
+// Admin Authentication Modals
+function openLoginModal() {
   if (isAdmin) {
+    // If already logged in, this button acts as logout
     isAdmin = false;
     document.getElementById('adminPanel').style.display = 'none';
     document.getElementById('adminBtn').textContent = '🔒 Admin Login';
@@ -579,23 +618,38 @@ function toggleAdminPanel() {
     document.getElementById('adminBtn').classList.add('btn');
     showToast('Logged out.');
   } else {
-    const user = prompt("Enter Admin Username:");
-    if (user === null) return;
-    const pass = prompt("Enter Admin Password:");
-    if (pass === null) return;
-    
-    if (user === ADMIN_USER && pass === ADMIN_PASS) {
-      isAdmin = true;
-      document.getElementById('adminPanel').style.display = 'block';
-      document.getElementById('adminBtn').textContent = '🔓 Logout';
-      document.getElementById('adminBtn').classList.remove('btn');
-      document.getElementById('adminBtn').classList.add('btn-admin');
-      showToast('Admin Access Granted.');
-    } else {
-      showToast('Invalid Credentials.', true);
-    }
+    // Show login modal
+    document.getElementById('loginModal').style.display = 'flex';
+    document.getElementById('adminUser').value = '';
+    document.getElementById('adminPass').value = '';
   }
 }
+
+function closeLoginModal() {
+  document.getElementById('loginModal').style.display = 'none';
+}
+
+function submitLogin() {
+  const user = document.getElementById('adminUser').value;
+  const pass = document.getElementById('adminPass').value;
+  
+  if (user === ADMIN_USER && pass === ADMIN_PASS) {
+    isAdmin = true;
+    document.getElementById('adminPanel').style.display = 'block';
+    document.getElementById('adminBtn').textContent = '🔓 Logout';
+    document.getElementById('adminBtn').classList.remove('btn');
+    document.getElementById('adminBtn').classList.add('btn-admin');
+    closeLoginModal();
+    showToast('Admin Access Granted.');
+  } else {
+    showToast('Invalid Credentials.', true);
+  }
+}
+
+// Allow pressing "Enter" to submit login
+document.getElementById('adminPass').addEventListener('keypress', function (e) {
+  if (e.key === 'Enter') submitLogin();
+});
 
 function updateLocalState() {
   pendingSleep  = document.getElementById('manualModeToggle').checked  ? 1 : 0;
@@ -693,7 +747,7 @@ async function pushCommands() {
 }
 
 function syncUIState() {
-  // Only update if Admin Panel is visible
+  // Only update toggles if Admin Panel is visible
   if (!isAdmin) return;
 
   document.getElementById('manualModeToggle').checked  = commandState.manualMode === 1;
@@ -802,7 +856,6 @@ function downsampleData(data, maxPoints) {
     let chunk = data.slice(i, i + step);
     let avg = {};
     
-    // Average the numerical properties
     const keys = ['shtTemp','shtHum','bmeTemp','bmeHum','bmePress','bmeGas','ccsCO2','ccsTVOC',
                   'solarV','solarA','solarW','battV','battA','battW','droneV','ultraLeft','ultraRight','lux',
                   'accX','accY','accZ','sleepSec'];
@@ -977,11 +1030,7 @@ function closeLightbox() {
 function updateEnvCard(cardKey) {
   const group = GROUPS.find(g => g.key === cardKey), state = cardStates[cardKey];
   let data = filterByRange(allMergedData, state.range);
-  
-  // Downsample if too many points
-  if (state.range !== '24H' && state.range !== '7D') {
-     data = downsampleData(data, 400);
-  }
+  if (state.range !== '24H' && state.range !== '7D') { data = downsampleData(data, 400); }
   
   const wrapper = document.getElementById(`wrapper-${cardKey}`), canvas = document.getElementById(`chart-${cardKey}`);
   if (!wrapper || !canvas) return;
