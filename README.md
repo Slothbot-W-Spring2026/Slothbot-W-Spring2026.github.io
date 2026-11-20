@@ -65,6 +65,8 @@ flowchart TD
     
     SleepNow -->|Wake Up via Timer| Start
 
+```
+```mermaid
 flowchart LR
     %% POWER SUBSYSTEM
     subgraph Power_System [Power Management Subsystem]
@@ -121,4 +123,3 @@ flowchart LR
 
     WiFi <-->|HTTP / API Telemetry Upload| TS_Data
     WiFi <-->|Poll Control Toggles & Update Status| TS_Ctrl
-```
