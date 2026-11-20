@@ -65,3 +65,60 @@ flowchart TD
     
     SleepNow -->|Wake Up via Timer| Start
 ```
+
+flowchart LR
+    %% POWER SUBSYSTEM
+    subgraph Power_System [Power Management Subsystem]
+        direction TB
+        Batt[Main Battery Pack] --> VoltSense[Voltage Sensor / Divider]
+        Batt --> MainReg[Main Power Regulation]
+        Batt --> RelayBoard[Relay Control Module]
+    end
+
+    %% CORE CONTROLLER
+    subgraph Controller [Central Processing & Control]
+        direction TB
+        MCU[Microcontroller / MCU<br/>• Deep Sleep Timer<br/>• State Machine Logic]
+        WiFi[Wi-Fi Transceiver]
+        MCU <--> WiFi
+    end
+
+    %% SENSING SUBSYSTEM
+    subgraph Sensors [Environmental & System Sensing]
+        direction TB
+        SensorRelay[Sensor Power Relay]
+        SensorArray[Sensor Suite<br/>• Environmental Sensors<br/>• Telemetry Monitors]
+        SensorRelay -->|Switched Power| SensorArray
+    end
+
+    %% ACTUATION & PAYLOADS
+    subgraph Actuators [Actuation & Payload Subsystems]
+        direction TB
+        MotorCtrl[Locomotion / Motor Driver]
+        DroneCharge[Drone Charging Interface]
+        DronePwr[Drone Power Switch]
+        SurvSys[Surveillance Payload]
+    end
+
+    %% CLOUD & DASHBOARD
+    subgraph Cloud [Cloud Telemetry & Remote Dashboard]
+        direction TB
+        TS_Data[Telemetry Channels<br/>CH1 – CH4]
+        TS_Ctrl[Control & Status Registers<br/>• CH2 F8: Deep Sleep Override<br/>• CH4 F2/F3: Drone Charge Ctrl/Status<br/>• CH4 F4: Motor Control<br/>• CH4 F5: Surveillance Control<br/>• CH4 F6: Drone Power Control]
+    end
+
+    %% INTER-SUBSYSTEM CONNECTIONS
+    MainReg -->|3.3V / 5V Logic Power| MCU
+    VoltSense -->|Battery Voltage| MCU
+    
+    MCU -->|Relay Trigger| SensorRelay
+    SensorArray -->|Sensor Data| MCU
+    
+    RelayBoard -->|Switched Power| Actuators
+    MCU -->|Control Signals| MotorCtrl
+    MCU -->|Enable / Status| DroneCharge
+    MCU -->|Power Toggle| DronePwr
+    MCU -->|Enable Signal| SurvSys
+
+    WiFi <-->|HTTP / API Telemetry Upload| TS_Data
+    WiFi <-->|Poll Control Toggles & Update Status| TS_Ctrl
