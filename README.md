@@ -123,3 +123,61 @@ flowchart LR
 
     WiFi <-->|HTTP / API Telemetry Upload| TS_Data
     WiFi <-->|Poll Control Toggles & Update Status| TS_Ctrl
+```
+
+
+```mermaid
+flowchart TD
+    %% CLOUD & DASHBOARD (TOP LEVEL)
+    subgraph Cloud [Cloud Telemetry & Remote Dashboard]
+        direction LR
+        TS_Data[Telemetry Channels<br/>CH1 – CH4]
+        TS_Ctrl[Control & Status Registers<br/>• CH2 F8: Deep Sleep Override<br/>• CH4 F2/F3: Drone Charge Ctrl/Status<br/>• CH4 F4: Motor Control<br/>• CH4 F5: Surveillance Control<br/>• CH4 F6: Drone Power Control]
+    end
+
+    %% CORE CONTROLLER (MIDDLE LEVEL)
+    subgraph Controller [Central Processing & Control]
+        direction LR
+        WiFi[Wi-Fi Transceiver] <--> MCU[Microcontroller / MCU<br/>• Deep Sleep Timer<br/>• State Machine Logic]
+    end
+
+    %% HARDWARE SUBSYSTEMS (BOTTOM LEVEL)
+    subgraph Hardware [Hardware & Power Subsystems]
+        direction LR
+        
+        subgraph Power_System [Power Management]
+            direction TB
+            Batt[Main Battery Pack] --> VoltSense[Voltage Sensor / Divider]
+            Batt --> MainReg[Main Power Regulation]
+            Batt --> RelayBoard[Relay Control Module]
+        end
+
+        subgraph Sensors [Environmental & System Sensing]
+            direction TB
+            SensorRelay[Sensor Power Relay] -->|Switched Power| SensorArray[Sensor Suite<br/>• Environmental Sensors<br/>• Telemetry Monitors]
+        end
+
+        subgraph Actuators [Actuation & Payloads]
+            direction TB
+            MotorCtrl[Locomotion / Motor Driver]
+            DroneCharge[Drone Charging Interface]
+            DronePwr[Drone Power Switch]
+            SurvSys[Surveillance Payload]
+        end
+    end
+
+    %% TOP-DOWN INTER-SUBSYSTEM CONNECTIONS
+    TS_Data <-->|HTTP / API Telemetry Upload| WiFi
+    TS_Ctrl <-->|Poll Control Toggles & Update Status| WiFi
+
+    MainReg -->|3.3V / 5V Logic Power| MCU
+    VoltSense -->|Battery Voltage| MCU
+
+    MCU -->|Relay Trigger| SensorRelay
+    SensorArray -->|Sensor Data| MCU
+
+    RelayBoard -->|Switched Power| Actuators
+    MCU -->|Control Signals| MotorCtrl
+    MCU -->|Enable / Status| DroneCharge
+    MCU -->|Power Toggle| DronePwr
+    MCU -->|Enable Signal| SurvSys
