@@ -64,7 +64,6 @@ flowchart TD
     DeepSleepSequence[Disconnect WiFi<br/>Turn OFF Sensor Relay<br/>Delay 500ms] --> SleepNow([Enter Deep Sleep])
     
     SleepNow -->|Wake Up via Timer| Start
-```
 
 flowchart LR
     %% POWER SUBSYSTEM
@@ -122,3 +121,4 @@ flowchart LR
 
     WiFi <-->|HTTP / API Telemetry Upload| TS_Data
     WiFi <-->|Poll Control Toggles & Update Status| TS_Ctrl
+```
